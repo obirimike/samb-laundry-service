@@ -1,0 +1,135 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum UserRole {
+  CUSTOMER
+  ADMIN
+}
+
+enum ServiceCategory {
+  CLEANING
+  LAUNDRY
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum ContactMessageStatus {
+  NEW
+  READ
+  RESOLVED
+}
+
+model User {
+  id           String         @id @default(uuid())
+  name         String
+  email        String         @unique
+  phone        String?
+  passwordHash String?
+  role         UserRole       @default(CUSTOMER)
+
+  bookings     Booking[]
+  notifications Notification[]
+
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+
+  @@index([email])
+  @@index([role])
+}
+
+model Service {
+  id          String          @id @default(uuid())
+  name        String
+  slug        String          @unique
+  description String
+  category    ServiceCategory
+  imageUrl    String?
+  isActive    Boolean         @default(true)
+
+  bookings    Booking[]
+
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  @@index([category])
+  @@index([isActive])
+}
+
+model Booking {
+  id                 String        @id @default(uuid())
+  bookingNumber     String        @unique
+
+  customerId         String
+  serviceId          String
+
+  status             BookingStatus @default(PENDING)
+
+  preferredDate      DateTime
+  preferredTime      String
+
+  address            String
+  propertyType       String?
+  numberOfRooms      Int?
+  estimatedSize      String?
+  specialInstructions String?
+
+  adminNotes         String?
+
+  customer           User          @relation(fields: [customerId], references: [id], onDelete: Restrict)
+  service            Service       @relation(fields: [serviceId], references: [id], onDelete: Restrict)
+
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
+  confirmedAt        DateTime?
+  completedAt        DateTime?
+  cancelledAt        DateTime?
+
+  @@index([customerId])
+  @@index([serviceId])
+  @@index([status])
+  @@index([preferredDate])
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+
+  userId    String
+  title     String
+  message   String
+  type      String
+  isRead    Boolean  @default(false)
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([isRead])
+}
+
+model ContactMessage {
+  id        String                @id @default(uuid())
+
+  name      String
+  email     String
+  phone     String?
+  subject   String
+  message   String
+  status    ContactMessageStatus  @default(NEW)
+
+  createdAt DateTime              @default(now())
+
+  @@index([status])
+  @@index([createdAt])
+}
