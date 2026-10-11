@@ -1,69 +1,290 @@
-import Image from "next/image";
 
-export default function Home() {
-  return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
-  );
+import Link from "next/link";
+import {
+    ArrowRight,
+    CheckCircle2,
+    Clock3,
+    Sparkles,
+    ShieldCheck,
+    WashingMachine,
+    Building2,
+    Home,
+} from "lucide-react";
+import { db } from "@/lib/db";
+import NavBar from "@/components/layout/NavBar";
+import Footer from "@/components/layout/Footer";
+
+export default async function HomePage() {
+    const services = await db.service.findMany({
+        where: { isActive: true },
+        orderBy: [{ category: "asc" }, { name: "asc" }],
+        take: 6,
+    });
+
+    return (
+        <>
+            <NavBar />
+
+            <main>
+                <section className="relative overflow-hidden bg-slate-950 text-white">
+                    <div className="absolute inset-0 bg-gradient-to-br from-blue-950 via-indigo-950 to-slate-950" />
+                    <div className="absolute -right-24 -top-24 h-96 w-96 rounded-full bg-blue-500/20 blur-3xl" />
+                    <div className="absolute -bottom-40 left-1/4 h-96 w-96 rounded-full bg-indigo-500/20 blur-3xl" />
+
+                    <div className="relative mx-auto grid max-w-7xl items-center gap-14 px-4 py-20 sm:px-6 sm:py-28 lg:grid-cols-2 lg:px-8 lg:py-32">
+                        <div>
+                            <span className="inline-flex items-center gap-2 rounded-full border border-blue-300/20 bg-white/10 px-4 py-2 text-sm font-medium text-blue-100">
+                                <Sparkles size={16} />
+                                Professional cleaning solutions
+                            </span>
+
+                            <h1 className="mt-7 max-w-2xl text-4xl font-extrabold leading-tight tracking-tight sm:text-5xl lg:text-6xl">
+                                A cleaner space.
+                                <span className="block text-blue-300">A better everyday.</span>
+                            </h1>
+
+                            <p className="mt-6 max-w-xl text-base leading-8 text-slate-300 sm:text-lg">
+                                From routine and deep cleaning to post-construction care and
+                                laundry services, SAMB&apos;s helps you keep your spaces fresh,
+                                comfortable and ready for what matters.
+                            </p>
+
+                            <div className="mt-9 flex flex-col gap-3 sm:flex-row">
+                                <Link
+                                    href="/register"
+                                    className="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-500 px-6 py-3.5 font-semibold text-white transition hover:bg-blue-400"
+                                >
+                                    Request a service <ArrowRight size={18} />
+                                </Link>
+                                <Link
+                                    href="/services"
+                                    className="inline-flex items-center justify-center rounded-xl border border-white/20 px-6 py-3.5 font-semibold text-white transition hover:bg-white/10"
+                                >
+                                    Explore our services
+                                </Link>
+                            </div>
+
+                            <div className="mt-9 flex flex-wrap gap-x-6 gap-y-3 text-sm text-slate-300">
+                                <span className="flex items-center gap-2">
+                                    <CheckCircle2 size={17} className="text-blue-300" />
+                                    Tailored service options
+                                </span>
+                                <span className="flex items-center gap-2">
+                                    <CheckCircle2 size={17} className="text-blue-300" />
+                                    Clear booking process
+                                </span>
+                            </div>
+                        </div>
+
+                        <div className="relative mx-auto w-full max-w-lg">
+                            <div className="rounded-[2rem] border border-white/15 bg-white/10 p-4 shadow-2xl backdrop-blur-sm sm:p-6">
+                                <div className="rounded-[1.5rem] bg-white p-6 text-slate-900 sm:p-8">
+                                    <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-100 text-blue-700">
+                                        <Sparkles size={28} />
+                                    </div>
+                                    <p className="mt-6 text-sm font-semibold uppercase tracking-wider text-blue-700">
+                                        Care in every detail
+                                    </p>
+                                    <h2 className="mt-2 text-2xl font-bold sm:text-3xl">
+                                        Your space, refreshed.
+                                    </h2>
+                                    <p className="mt-3 text-sm leading-6 text-slate-600">
+                                        Tell us what you need. Our team can review your request and
+                                        discuss the right service and schedule with you.
+                                    </p>
+
+                                    <div className="mt-7 space-y-4">
+                                        <div className="flex items-center gap-4 rounded-xl bg-slate-50 p-4">
+                                            <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-100 text-blue-700">
+                                                <Home size={21} />
+                                            </span>
+                                            <div>
+                                                <p className="font-semibold">Residential cleaning</p>
+                                                <p className="mt-1 text-xs text-slate-500">Comfortable, refreshed living spaces</p>
+                                            </div>
+                                        </div>
+                                        <div className="flex items-center gap-4 rounded-xl bg-slate-50 p-4">
+                                            <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-indigo-100 text-indigo-700">
+                                                <Building2 size={21} />
+                                            </span>
+                                            <div>
+                                                <p className="font-semibold">Office and commercial</p>
+                                                <p className="mt-1 text-xs text-slate-500">Clean, presentable work environments</p>
+                                            </div>
+                                        </div>
+                                        <div className="flex items-center gap-4 rounded-xl bg-slate-50 p-4">
+                                            <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-cyan-100 text-cyan-700">
+                                                <WashingMachine size={21} />
+                                            </span>
+                                            <div>
+                                                <p className="font-semibold">Laundry care</p>
+                                                <p className="mt-1 text-xs text-slate-500">Washing, folding and ironing services</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="absolute -bottom-5 -left-3 hidden items-center gap-3 rounded-2xl border border-slate-200 bg-white p-4 text-slate-900 shadow-xl sm:flex">
+                                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-green-100 text-green-700">
+                                    <ShieldCheck size={21} />
+                                </span>
+                                <div>
+                                    <p className="text-sm font-bold">Quality-minded service</p>
+                                    <p className="mt-1 text-xs text-slate-500">Attention to the details</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section className="border-b border-slate-200 bg-white">
+                    <div className="mx-auto grid max-w-7xl gap-6 px-4 py-8 sm:px-6 md:grid-cols-3 lg:px-8">
+                        <div className="flex items-start gap-3">
+                            <CheckCircle2 className="mt-1 shrink-0 text-blue-700" size={21} />
+                            <div>
+                                <h3 className="font-semibold text-slate-900">Attention to detail</h3>
+                                <p className="mt-1 text-sm leading-6 text-slate-600">A thoughtful approach to each cleaning request.</p>
+                            </div>
+                        </div>
+                        <div className="flex items-start gap-3">
+                            <Clock3 className="mt-1 shrink-0 text-blue-700" size={21} />
+                            <div>
+                                <h3 className="font-semibold text-slate-900">Scheduling flexibility</h3>
+                                <p className="mt-1 text-sm leading-6 text-slate-600">Discuss one-time, recurring or event-based needs.</p>
+                            </div>
+                        </div>
+                        <div className="flex items-start gap-3">
+                            <ShieldCheck className="mt-1 shrink-0 text-blue-700" size={21} />
+                            <div>
+                                <h3 className="font-semibold text-slate-900">Quality checks</h3>
+                                <p className="mt-1 text-sm leading-6 text-slate-600">A process built around reviewing work and client feedback.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section className="bg-slate-50 px-4 py-20 sm:px-6 lg:px-8">
+                    <div className="mx-auto max-w-7xl">
+                        <div className="flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
+                            <div>
+                                <p className="text-sm font-bold uppercase tracking-[0.18em] text-blue-700">
+                                    What we do
+                                </p>
+                                <h2 className="mt-3 text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">
+                                    Services for your space
+                                </h2>
+                                <p className="mt-3 max-w-2xl leading-7 text-slate-600">
+                                    Explore our cleaning and laundry options. The exact scope can
+                                    be discussed when you submit a request.
+                                </p>
+                            </div>
+                            <Link
+                                href="/services"
+                                className="inline-flex items-center gap-2 font-semibold text-blue-700 hover:text-blue-900"
+                            >
+                                View all services <ArrowRight size={18} />
+                            </Link>
+                        </div>
+
+                        <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                            {services.map((service) => (
+                                <article
+                                    key={service.id}
+                                    className="group rounded-2xl border border-slate-200 bg-white p-6 transition hover:-translate-y-1 hover:border-blue-200 hover:shadow-lg"
+                                >
+                                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-50 text-blue-700">
+                                        {service.category === "LAUNDRY" ? (
+                                            <WashingMachine size={23} />
+                                        ) : (
+                                            <Sparkles size={23} />
+                                        )}
+                                    </div>
+                                    <p className="mt-5 text-xs font-bold uppercase tracking-wider text-blue-700">
+                                        {service.category === "LAUNDRY" ? "Laundry care" : "Cleaning"}
+                                    </p>
+                                    <h3 className="mt-2 text-xl font-bold text-slate-900">
+                                        {service.name}
+                                    </h3>
+                                    <p className="mt-3 min-h-12 text-sm leading-6 text-slate-600">
+                                        {service.description}
+                                    </p>
+                                    <Link
+                                        href={`/services/${service.slug}`}
+                                        className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-blue-700 group-hover:gap-3"
+                                    >
+                                        View details <ArrowRight size={16} />
+                                    </Link>
+                                </article>
+                            ))}
+                        </div>
+                    </div>
+                </section>
+
+                <section id="about" className="bg-white px-4 py-20 sm:px-6 lg:px-8">
+                    <div className="mx-auto grid max-w-7xl items-center gap-12 lg:grid-cols-2">
+                        <div className="rounded-3xl bg-gradient-to-br from-blue-50 to-indigo-100 p-8 sm:p-12">
+                            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-700 text-white">
+                                <Sparkles size={30} />
+                            </div>
+                            <p className="mt-8 text-sm font-bold uppercase tracking-wider text-blue-700">
+                                The SAMB&apos;s approach
+                            </p>
+                            <h2 className="mt-3 text-3xl font-extrabold leading-tight text-slate-900">
+                                Professional care, shaped around your needs.
+                            </h2>
+                            <p className="mt-5 leading-7 text-slate-600">
+                                Every space and service request is different. We aim to
+                                understand the work required, agree on the scope, and keep
+                                communication clear throughout the process.
+                            </p>
+                        </div>
+
+                        <div>
+                            <p className="text-sm font-bold uppercase tracking-[0.18em] text-blue-700">
+                                Why choose us
+                            </p>
+                            <h2 className="mt-3 text-3xl font-extrabold text-slate-900 sm:text-4xl">
+                                A service you can plan around
+                            </h2>
+                            <div className="mt-8 space-y-6">
+                                {[
+                                    ["Flexible service options", "Discuss the work and schedule that fit your property or event."],
+                                    ["Clear communication", "Submit your requirements and let the team review the details with you."],
+                                    ["Quality-focused process", "Service checks and client feedback help us review the work delivered."],
+                                ].map(([title, description]) => (
+                                    <div key={title} className="flex gap-4">
+                                        <CheckCircle2 className="mt-1 shrink-0 text-blue-700" size={23} />
+                                        <div>
+                                            <h3 className="font-bold text-slate-900">{title}</h3>
+                                            <p className="mt-1 leading-7 text-slate-600">{description}</p>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="contact" className="bg-blue-700 px-4 py-16 text-white sm:px-6 lg:px-8">
+                    <div className="mx-auto flex max-w-7xl flex-col justify-between gap-7 md:flex-row md:items-center">
+                        <div>
+                            <h2 className="text-3xl font-extrabold">Ready to discuss your service needs?</h2>
+                            <p className="mt-3 max-w-2xl leading-7 text-blue-100">
+                                Create an account to submit a request. Our team can review the
+                                details and discuss pricing and scheduling with you.
+                            </p>
+                        </div>
+                        <Link
+                            href="/register"
+                            className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-white px-6 py-3.5 font-semibold text-blue-800 hover:bg-blue-50"
+                        >
+                            Get started <ArrowRight size={18} />
+                        </Link>
+                    </div>
+                </section>
+            </main>
+
+            <Footer />
+        </>
+    );
 }
