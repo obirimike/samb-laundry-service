@@ -11,8 +11,6 @@ import {
   WashingMachine,
 } from "lucide-react";
 import { db } from "@/lib/db";
-import NavBar from "@/components/layout/NavBar";
-import Footer from "@/components/layout/Footer";
 
 type ServicePageProps = {
   params: Promise<{ slug: string }>;
@@ -54,10 +52,7 @@ export default async function ServiceDetailPage({
   const isLaundry = service.category === "LAUNDRY";
 
   return (
-    <>
-      <NavBar />
-
-      <main className="min-h-screen bg-slate-50">
+    <main className="min-h-screen bg-slate-50">
         <section className="bg-slate-950 px-4 py-14 text-white sm:px-6 sm:py-20 lg:px-8">
           <div className="mx-auto max-w-7xl">
             <Link
@@ -189,8 +184,5 @@ export default async function ServiceDetailPage({
           </div>
         </section>
       </main>
-
-      <Footer />
-    </>
   );
 }
