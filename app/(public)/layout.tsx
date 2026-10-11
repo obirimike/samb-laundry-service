@@ -1,0 +1,17 @@
+
+import Navbar from "@/components/layout/NavBar";
+import Footer from "@/components/layout/Footer";
+
+export default function PublicLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <>
+      <Navbar />
+      {children}
+      <Footer />
+    </>
+  );
+}
