@@ -99,7 +99,7 @@ export default async function BookingHistoryPage() {
 
             <Link
               href="/book"
-              className="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-700 px-5 py-3 font-semibold text-white hover:bg-blue-800"
+              className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#031c43] px-5 py-3 font-semibold text-white hover:bg-blue-800"
             >
               <Plus size={18} />
               Request a service
@@ -151,7 +151,7 @@ export default async function BookingHistoryPage() {
                 </p>
                 <Link
                   href="/services"
-                  className="mt-6 inline-flex items-center gap-2 rounded-xl bg-blue-700 px-5 py-3 font-semibold text-white hover:bg-blue-800"
+                  className="mt-6 inline-flex items-center gap-2 rounded-xl bg-[#031c43] px-5 py-3 font-semibold text-white hover:bg-blue-800"
                 >
                   Explore services <ArrowRight size={17} />
                 </Link>
