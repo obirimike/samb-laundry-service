@@ -5,7 +5,7 @@ import { ArrowRight, ClipboardList, MessageCircle } from "lucide-react";
 export default function ContactPage() {
   return (
     <main className="min-h-[70vh] bg-slate-50">
-        <section className="bg-slate-950 px-4 py-16 text-white sm:px-6 sm:py-20 lg:px-8">
+        <section className="bg-[#031c43] px-4 py-16 text-white sm:px-6 sm:py-20 lg:px-8">
           <div className="mx-auto max-w-7xl">
             <p className="text-sm font-bold uppercase tracking-[0.18em] text-blue-300">
               Contact us
