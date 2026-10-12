@@ -5,10 +5,10 @@ import { CheckCircle2, ShieldCheck, Sparkles, Users } from "lucide-react";
 export default function AboutPage() {
   return (
     <main>
-      <section className="bg-slate-950 px-4 py-20 text-white sm:px-6 lg:px-8">
+      <section className="bg-[#031c43] px-4 py-20 text-white sm:px-6 lg:px-8">
         <div className="mx-auto grid max-w-7xl items-center gap-10 lg:grid-cols-2">
           <div>
-            <p className="text-sm font-bold uppercase tracking-[0.18em] text-blue-300">
+            <p className="text-sm font-bold uppercase tracking-[0.18em] text-blue-300 ">
               About SAMB&apos;s
             </p>
             <h1 className="mt-4 max-w-xl text-4xl font-black sm:text-5xl">
@@ -32,20 +32,20 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+      <section className="bg-white mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         <div className="grid gap-12 lg:grid-cols-2">
           <div>
-            <h2 className="text-3xl font-extrabold text-slate-900">
+            <h2 className="text-blue-900 text-3xl font-extrabold text-slate-900">
               Our approach
             </h2>
-            <p className="mt-5 leading-8 text-slate-600">
+            <p className="text-black mt-5 leading-8 text-slate-600">
               We believe cleaning should be professional, reliable, and
-              tailored to the needs of each client. Whether the work involves
+              customized to the needs of each client. Whether the work involves
               routine maintenance, a detailed deep clean, post-construction
               cleanup, or preparation for an event, our goal is to help
               create clean and comfortable spaces.
             </p>
-            <p className="mt-4 leading-8 text-slate-600">
+            <p className="text-black mt-4 leading-8 text-slate-600">
               We discuss the scope of work, scheduling, and pricing with
               clients before confirming a service so expectations are clear.
             </p>
@@ -66,7 +66,7 @@ export default function AboutPage() {
               {
                 icon: Users,
                 title: "Client-focused",
-                text: "Service arrangements can be tailored to client needs.",
+                text: "Service arrangements can be customized to client needs.",
               },
               {
                 icon: CheckCircle2,
@@ -77,7 +77,7 @@ export default function AboutPage() {
               const Icon = item.icon;
 
               return (
-                <div key={item.title} className="rounded-2xl border border-slate-200 p-5">
+                <div key={item.title} className="text-black rounded-2xl border border-slate-200 p-5">
                   <Icon size={26} className="text-blue-700" />
                   <h3 className="mt-4 font-bold text-slate-900">{item.title}</h3>
                   <p className="mt-2 text-sm leading-6 text-slate-600">{item.text}</p>
@@ -87,7 +87,7 @@ export default function AboutPage() {
           </div>
         </div>
 
-        <div className="mt-14 rounded-3xl bg-blue-700 p-8 text-white sm:p-10">
+        <div className="mt-14 rounded-3xl bg-[#031c43] p-8 text-white sm:p-10">
           <h2 className="text-2xl font-extrabold">
             Let&apos;s talk about your cleaning needs.
           </h2>
