@@ -44,7 +44,7 @@ export default async function BookingPage({
     <>
 
       <main className="min-h-screen bg-slate-50">
-        <section className="bg-slate-950 px-4 py-14 text-white sm:px-6 sm:py-16 lg:px-8">
+        <section className="bg-[#031c43] px-4 py-14 text-white sm:px-6 sm:py-16 lg:px-8">
           <div className="mx-auto max-w-4xl">
             <div className="inline-flex rounded-xl bg-white/10 p-3 text-blue-200">
               <ClipboardList size={28} />
