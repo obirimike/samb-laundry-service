@@ -46,9 +46,9 @@ function LoginForm() {
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-slate-50 px-4 py-12">
+    <main className="flex min-h-screen items-center justify-center bg-gray-300 px-4 py-12">
       <div className="w-full max-w-md overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl">
-        <div className="bg-gradient-to-r from-blue-700 via-indigo-700 to-purple-700 px-8 py-9 text-white">
+        <div className="bg-[#031c43] px-8 py-9 text-white">
           <Link href="/" className="text-sm font-semibold text-blue-100 hover:text-white">
             ← Back to home
           </Link>
@@ -141,14 +141,14 @@ function LoginForm() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-xl bg-indigo-700 px-5 py-3.5 font-semibold text-white transition hover:bg-indigo-800 disabled:cursor-not-allowed disabled:opacity-60"
+            className="w-full rounded-xl bg-[#031c43] px-5 py-3.5 font-semibold text-white transition hover:bg-[#031c43]/80 disabled:cursor-not-allowed disabled:opacity-60"
           >
             {loading ? "Signing in..." : "Sign in"}
           </button>
 
           <p className="text-center text-sm text-slate-600">
             Don&apos;t have an account?{" "}
-            <Link href="/register" className="font-semibold text-indigo-700 hover:underline">
+            <Link href="/register" className="font-semibold text-blue-900 hover:underline">
               Create one
             </Link>
           </p>
