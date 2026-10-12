@@ -30,7 +30,7 @@ export default async function ServicesPage() {
     <main className="min-h-screen bg-slate-50">
       {/* Hero Banner */}
       <section className="relative overflow-hidden bg-slate-950 px-4 py-16 text-white sm:px-6 sm:py-20 lg:px-8">
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-950/80 via-slate-950 to-slate-950" />
+        <div className="absolute inset-0 bg-[#031c43]" />
         <div className="relative mx-auto max-w-7xl">
           <div className="inline-flex items-center gap-2 rounded-full border border-blue-400/20 bg-blue-500/10 px-3.5 py-1.5 text-xs font-semibold text-blue-300">
             <Sparkles size={14} />
@@ -40,7 +40,7 @@ export default async function ServicesPage() {
             Our Cleaning &amp; Laundry Services
           </h1>
           <p className="mt-4 max-w-2xl text-base leading-relaxed text-slate-300 sm:text-lg">
-            Choose from tailored cleaning packages and full laundry care.
+            Choose from personalized cleaning packages and full laundry care.
             Every request is handled with meticulous attention to detail and care.
           </p>
         </div>
@@ -51,7 +51,7 @@ export default async function ServicesPage() {
         <ServiceGrid services={services} enableFilterTabs={true} />
 
         {/* Custom Help Box */}
-        <div className="mt-16 rounded-3xl bg-gradient-to-br from-blue-600 to-indigo-700 p-8 text-white shadow-lg sm:p-10">
+        <div className="mt-16 rounded-3xl bg-[#031c43] p-8 text-white shadow-lg sm:p-10">
           <div className="max-w-2xl">
             <h2 className="text-2xl font-bold sm:text-3xl">
               Not sure which service fits your space?
