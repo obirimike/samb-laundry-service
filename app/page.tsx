@@ -1,5 +1,6 @@
 
 import Link from "next/link";
+import Image from "next/image";
 import {
     ArrowRight,
     CheckCircle2,
@@ -76,52 +77,17 @@ export default async function HomePage() {
                             </div>
                         </div>
 
-                        <div className="relative mx-auto w-full max-w-lg">
-                            <div className="rounded-[2rem] border border-white/15 bg-white/10 p-4 shadow-2xl backdrop-blur-sm sm:p-6">
-                                <div className="rounded-[1.5rem] bg-white p-6 text-slate-900 sm:p-8">
-                                    <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-100 text-blue-700">
-                                        <Sparkles size={28} />
-                                    </div>
-                                    <p className="mt-6 text-sm font-semibold uppercase tracking-wider text-blue-700">
-                                        Care in every detail
-                                    </p>
-                                    <h2 className="mt-2 text-2xl font-bold sm:text-3xl">
-                                        Your space, refreshed.
-                                    </h2>
-                                    <p className="mt-3 text-sm leading-6 text-slate-600">
-                                        Tell us what you need. Our team can review your request and
-                                        discuss the right service and schedule with you.
-                                    </p>
-
-                                    <div className="mt-7 space-y-4">
-                                        <div className="flex items-center gap-4 rounded-xl bg-slate-50 p-4">
-                                            <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-100 text-blue-700">
-                                                <Home size={21} />
-                                            </span>
-                                            <div>
-                                                <p className="font-semibold">Residential cleaning</p>
-                                                <p className="mt-1 text-xs text-slate-500">Comfortable, refreshed living spaces</p>
-                                            </div>
-                                        </div>
-                                        <div className="flex items-center gap-4 rounded-xl bg-slate-50 p-4">
-                                            <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-indigo-100 text-indigo-700">
-                                                <Building2 size={21} />
-                                            </span>
-                                            <div>
-                                                <p className="font-semibold">Office and commercial</p>
-                                                <p className="mt-1 text-xs text-slate-500">Clean, presentable work environments</p>
-                                            </div>
-                                        </div>
-                                        <div className="flex items-center gap-4 rounded-xl bg-slate-50 p-4">
-                                            <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-cyan-100 text-cyan-700">
-                                                <WashingMachine size={21} />
-                                            </span>
-                                            <div>
-                                                <p className="font-semibold">Laundry care</p>
-                                                <p className="mt-1 text-xs text-slate-500">Washing, folding and ironing services</p>
-                                            </div>
-                                        </div>
-                                    </div>
+                        <div className="relative mx-auto w-full max-w-lg lg:max-w-none">
+                            <div className="relative overflow-hidden rounded-[2.5rem] border border-white/20 bg-white/10 p-3 shadow-2xl backdrop-blur-md sm:p-4">
+                                <div className="relative aspect-[4/3] w-full overflow-hidden rounded-[2rem] bg-slate-900 sm:aspect-[16/12] lg:aspect-[4/3]">
+                                    <Image
+                                        src="/images/hero/samb-hero.jpeg"
+                                        alt="SAMB's Laundry &amp; Klinin Services - Professional househelps and office cleaners"
+                                        fill
+                                        priority
+                                        sizes="(max-width: 1024px) 100vw, 50vw"
+                                        className="object-cover"
+                                    />
                                 </div>
                             </div>
                             <div className="absolute -bottom-5 -left-3 hidden items-center gap-3 rounded-2xl border border-slate-200 bg-white p-4 text-slate-900 shadow-xl sm:flex">
@@ -132,6 +98,12 @@ export default async function HomePage() {
                                     <p className="text-sm font-bold">Quality-minded service</p>
                                     <p className="mt-1 text-xs text-slate-500">Attention to the details</p>
                                 </div>
+                            </div>
+                            <div className="absolute -top-4 -right-3 hidden items-center gap-2.5 rounded-2xl border border-white/20 bg-slate-900/90 px-4 py-2.5 text-white shadow-xl backdrop-blur-md md:flex">
+                                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-500 text-white">
+                                    <Sparkles size={16} />
+                                </span>
+                                <span className="text-xs font-semibold">Househelps &amp; Office Cleaners</span>
                             </div>
                         </div>
                     </div>
@@ -223,8 +195,14 @@ export default async function HomePage() {
                 <section id="about" className="bg-white px-4 py-20 sm:px-6 lg:px-8">
                     <div className="mx-auto grid max-w-7xl items-center gap-12 lg:grid-cols-2">
                         <div className="rounded-3xl bg-gradient-to-br from-blue-50 to-indigo-100 p-8 sm:p-12">
-                            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-700 text-white">
-                                <Sparkles size={30} />
+                            <div className="relative h-16 w-16 overflow-hidden rounded-2xl border-2 border-white bg-blue-900 shadow-md">
+                                <Image
+                                    src="/images/logo/samb-logo.jpeg"
+                                    alt="SAMB's Logo"
+                                    fill
+                                    sizes="64px"
+                                    className="object-cover"
+                                />
                             </div>
                             <p className="mt-8 text-sm font-bold uppercase tracking-wider text-blue-700">
                                 The SAMB&apos;s approach
