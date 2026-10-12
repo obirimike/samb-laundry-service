@@ -67,7 +67,7 @@ const services = [
     name: "Disinfection & Sanitization",
     slug: "disinfection-sanitization",
     description:
-      "Cleaning and sanitization services tailored to the requirements of a space.",
+      "Cleaning and sanitization services personalized to the requirements of a space.",
     category: ServiceCategory.CLEANING,
   },
   {
