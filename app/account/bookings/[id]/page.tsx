@@ -265,7 +265,7 @@ export default async function BookingDetailsPage({
 
               <div className="mt-4 space-y-4">
                 <div className="flex gap-3">
-                  <span className="mt-1 h-2.5 w-2.5 shrink-0 rounded-full bg-blue-600" />
+                  <span className="mt-1 h-2.5 w-2.5 shrink-0 rounded-full bg-[#031c43]" />
                   <div>
                     <p className="font-medium text-slate-900">
                       Request submitted
@@ -278,7 +278,7 @@ export default async function BookingDetailsPage({
 
                 {booking.confirmedAt && (
                   <div className="flex gap-3">
-                    <span className="mt-1 h-2.5 w-2.5 shrink-0 rounded-full bg-blue-600" />
+                    <span className="mt-1 h-2.5 w-2.5 shrink-0 rounded-full bg-[#031c43]" />
                     <div>
                       <p className="font-medium text-slate-900">
                         Booking confirmed
@@ -334,7 +334,7 @@ export default async function BookingDetailsPage({
             <div className="mt-7 flex flex-wrap gap-3">
               <Link
                 href="/services"
-                className="rounded-xl bg-blue-700 px-5 py-3 font-semibold text-white hover:bg-blue-800"
+                className="rounded-xl bg-[#031c43] px-5 py-3 font-semibold text-white hover:bg-blue-800"
               >
                 Browse services
               </Link>
