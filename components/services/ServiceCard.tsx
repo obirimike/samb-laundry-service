@@ -41,11 +41,10 @@ export default function ServiceCard({
 
   return (
     <article
-      className={`group flex flex-col overflow-hidden rounded-2xl border bg-white transition-all duration-300 hover:-translate-y-1 hover:shadow-xl ${
-        featured
-          ? "border-blue-300 ring-2 ring-blue-500/20 shadow-md"
-          : "border-slate-200/90 hover:border-blue-300"
-      }`}
+      className={`group flex flex-col overflow-hidden rounded-2xl border bg-white transition-all duration-300 hover:-translate-y-1 hover:shadow-xl ${featured
+        ? "border-blue-300 ring-2 ring-blue-500/20 shadow-md"
+        : "border-slate-200/90 hover:border-blue-300"
+        }`}
     >
       {/* Image Area */}
       <div className="relative aspect-[16/10] w-full overflow-hidden bg-slate-100">
@@ -73,7 +72,7 @@ export default function ServiceCard({
 
         {/* Optional Featured / Instant badge */}
         {featured && (
-          <div className="absolute top-3.5 right-3.5 rounded-full bg-blue-600 px-2.5 py-0.5 text-[11px] font-semibold text-white shadow">
+          <div className="absolute top-3.5 right-3.5 rounded-full bg-[#031c43] px-2.5 py-0.5 text-[11px] font-semibold text-white shadow">
             Popular
           </div>
         )}
@@ -120,11 +119,10 @@ export default function ServiceCard({
 
           <Link
             href={`/book?service=${service.slug}`}
-            className={`inline-flex items-center gap-1.5 rounded-xl px-4 py-2 text-xs font-bold text-white shadow-sm transition hover:shadow-md ${
-              isLaundry
-                ? "bg-sky-600 hover:bg-sky-700"
-                : "bg-blue-600 hover:bg-blue-700"
-            }`}
+            className={`inline-flex items-center gap-1.5 rounded-xl px-4 py-2 text-xs font-bold text-white shadow-sm transition hover:shadow-md ${isLaundry
+              ? "bg-[#031c43] hover:bg-sky-700"
+              : "bg-[#031c43] hover:bg-[#031c43]"
+              }`}
           >
             <CalendarCheck size={14} />
             Book now
