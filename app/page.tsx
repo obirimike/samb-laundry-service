@@ -29,9 +29,9 @@ export default async function HomePage() {
 
             <main>
                 <section className="relative overflow-hidden bg-slate-950 text-white">
-                    <div className="absolute inset-0 bg-gradient-to-br from-blue-950 via-indigo-950 to-slate-950" />
-                    <div className="absolute -right-24 -top-24 h-96 w-96 rounded-full bg-blue-500/20 blur-3xl" />
-                    <div className="absolute -bottom-40 left-1/4 h-96 w-96 rounded-full bg-indigo-500/20 blur-3xl" />
+                    <div className="absolute inset-0 bg-[#031c43]" />
+                    <div className="absolute -right-24 -top-24 h-96 w-96 rounded-full bg-[#031c43]/20 blur-3xl" />
+                    <div className="absolute -bottom-40 left-1/4 h-96 w-96 rounded-full bg-[#031c43]/20 blur-3xl" />
 
                     <div className="relative mx-auto grid max-w-7xl items-center gap-14 px-4 py-20 sm:px-6 sm:py-28 lg:grid-cols-2 lg:px-8 lg:py-32">
                         <div>
@@ -69,7 +69,7 @@ export default async function HomePage() {
                             <div className="mt-9 flex flex-wrap gap-x-6 gap-y-3 text-sm text-slate-300">
                                 <span className="flex items-center gap-2">
                                     <CheckCircle2 size={17} className="text-blue-300" />
-                                    Tailored service options
+                                    personalized service options
                                 </span>
                                 <span className="flex items-center gap-2">
                                     <CheckCircle2 size={17} className="text-blue-300" />
@@ -83,7 +83,7 @@ export default async function HomePage() {
                                 <div className="relative aspect-[4/3] w-full overflow-hidden rounded-[2rem] bg-slate-900 sm:aspect-[16/12] lg:aspect-[4/3]">
                                     <Image
                                         src="/images/hero/samb-hero.jpeg"
-                                        alt="SAMB's Laundry &amp; Klinin Services - Professional househelps and office cleaners"
+                                        alt="SAMB's Laundry &amp; Klinin Services - Professional office cleaners"
                                         fill
                                         priority
                                         sizes="(max-width: 1024px) 100vw, 50vw"
@@ -102,9 +102,9 @@ export default async function HomePage() {
                             </div>
                             <div className="absolute -top-4 -right-3 hidden items-center gap-2.5 rounded-2xl border border-white/20 bg-slate-900/90 px-4 py-2.5 text-white shadow-xl backdrop-blur-md md:flex">
                                 <span className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-500 text-white">
-                                    <Sparkles size={16} />
+                                    <WashingMachine size={16} />
                                 </span>
-                                <span className="text-xs font-semibold">Househelps &amp; Office Cleaners</span>
+                                <span className="text-xs font-semibold">Laundry &amp; Office Cleaners</span>
                             </div>
                         </div>
                     </div>
@@ -218,7 +218,7 @@ export default async function HomePage() {
                     </div>
                 </section>
 
-                <section id="contact" className="bg-blue-700 px-4 py-16 text-white sm:px-6 lg:px-8">
+                <section id="contact" className="bg-[#031c43] px-4 py-16 text-white sm:px-6 lg:px-8">
                     <div className="mx-auto flex max-w-7xl flex-col justify-between gap-7 md:flex-row md:items-center">
                         <div>
                             <h2 className="text-3xl font-extrabold">Ready to discuss your service needs?</h2>
