@@ -213,7 +213,7 @@ export default async function ServiceDetailPage({
               </p>
               <p className="mt-1 font-bold text-slate-900">Custom quotation</p>
               <p className="mt-1 text-xs text-slate-500">
-                Tailored based on room size, load, or special requests.
+                customized based on room size, load, or special requests.
               </p>
             </div>
 
@@ -228,7 +228,7 @@ export default async function ServiceDetailPage({
 
             <Link
               href={`/book?service=${service.slug}`}
-              className="flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 px-5 py-3.5 font-bold text-white shadow-sm transition hover:bg-blue-700 hover:shadow"
+              className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#031c43] px-5 py-3.5 font-bold text-white shadow-sm transition hover:bg-[#031c43] hover:shadow"
             >
               Book this service <ArrowRight size={17} />
             </Link>
