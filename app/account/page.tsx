@@ -1,5 +1,6 @@
 
 import Link from "next/link";
+import Image from "next/image";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
@@ -46,8 +47,17 @@ export default async function AccountPage() {
     <main className="min-h-screen bg-slate-50">
       <header className="border-b border-slate-200 bg-white">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-5">
-          <Link href="/" className="text-lg font-bold text-indigo-800">
-            SAMB&apos;s Services
+          <Link href="/" className="flex items-center gap-3 text-lg font-bold text-slate-900">
+            <span className="relative flex h-9 w-9 shrink-0 overflow-hidden rounded-full border border-blue-200 bg-blue-900 shadow-sm">
+              <Image
+                src="/images/logo/samb-logo.jpeg"
+                alt="SAMB's Logo"
+                fill
+                sizes="36px"
+                className="object-cover"
+              />
+            </span>
+            <span>SAMB&apos;s Services</span>
           </Link>
 
           <form action="/api/auth/signout" method="POST">
@@ -72,12 +82,23 @@ export default async function AccountPage() {
             from one convenient place.
           </p>
 
-          <Link
-            href="/account/bookings/new"
-            className="mt-6 inline-flex rounded-xl bg-white px-5 py-3 font-semibold text-indigo-800 transition hover:bg-blue-50"
-          >
-            Request a service
-          </Link>
+          
+<Link
+  href="/book"
+  className="mt-5 inline-block rounded-xl border border-blue-200 px-5 py-3 font-semibold bg-white text-blue-700 hover:bg-gray-100"
+>
+  Request a service
+</Link>
+
+
+<Link
+  href="/account/bookings"
+  className="mt-5 ml-5 inline-block rounded-xl border border-blue-200 px-5 py-3 font-semibold bg-blue text-white hover:bg-gray-100"
+>
+  My bookings
+</Link>
+
+
         </section>
 
         <section className="mt-10">
