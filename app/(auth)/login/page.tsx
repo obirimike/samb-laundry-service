@@ -2,10 +2,12 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { FormEvent, useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense } from "react";
+import { Eye, EyeOff } from "lucide-react";
 
 function LoginForm() {
   const router = useRouter();
@@ -13,6 +15,7 @@ function LoginForm() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -50,10 +53,26 @@ function LoginForm() {
             ← Back to home
           </Link>
 
-          <p className="mt-6 text-sm font-semibold uppercase tracking-[0.2em] text-blue-100">
-            SAMB&apos;s Laundry and Klinin Services
-          </p>
-          <h1 className="mt-3 text-3xl font-bold">Welcome back</h1>
+          <div className="mt-6 flex items-center gap-3">
+            <span className="relative flex h-12 w-12 shrink-0 overflow-hidden rounded-full border border-white/30 bg-blue-900 shadow-md">
+              <Image
+                src="/images/logo/samb-logo.jpeg"
+                alt="SAMB's Logo"
+                fill
+                sizes="48px"
+                className="object-cover"
+              />
+            </span>
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-blue-100">
+                SAMB&apos;S
+              </p>
+              <p className="text-xs font-medium text-blue-200">
+                Laundry &amp; Klinin Services
+              </p>
+            </div>
+          </div>
+          <h1 className="mt-4 text-3xl font-bold">Welcome back</h1>
           <p className="mt-2 text-sm leading-6 text-blue-100">
             Sign in to manage your service requests and bookings.
           </p>
@@ -96,17 +115,27 @@ function LoginForm() {
             <label htmlFor="password" className="mb-2 block text-sm font-semibold text-slate-700">
               Password
             </label>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              autoComplete="current-password"
-              required
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-              placeholder="Enter your password"
-              className="text-black w-full rounded-xl border border-slate-300 px-4 py-3 outline-none transition focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100"
-            />
+            <div className="relative">
+              <input
+                id="password"
+                name="password"
+                type={showPassword ? "text" : "password"}
+                autoComplete="current-password"
+                required
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+                placeholder="Enter your password"
+                className="text-black w-full rounded-xl border border-slate-300 px-4 py-3 pr-11 outline-none transition focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((prev) => !prev)}
+                className="absolute inset-y-0 right-0 flex items-center pr-3.5 text-slate-400 hover:text-slate-600 focus:outline-none"
+                aria-label={showPassword ? "Hide password" : "Show password"}
+              >
+                {showPassword ? <EyeOff size={19} /> : <Eye size={19} />}
+              </button>
+            </div>
           </div>
 
           <button
