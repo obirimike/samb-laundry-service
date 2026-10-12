@@ -74,6 +74,8 @@ export default async function BookingPage({
                 id: service.id,
                 name: service.name,
                 category: service.category,
+                slug: service.slug,
+                description: (service as { description?: string }).description,
               }))}
               initialServiceId={selectedService?.id}
             />
