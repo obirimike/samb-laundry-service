@@ -186,11 +186,10 @@ export default function BookingForm({
           <div className="mt-3 flex items-center justify-between rounded-xl border border-blue-100 bg-blue-50/70 p-3.5">
             <div className="flex items-center gap-3">
               <div
-                className={`flex h-9 w-9 items-center justify-center rounded-lg ${
-                  currentService.category === "LAUNDRY"
+                className={`flex h-9 w-9 items-center justify-center rounded-lg ${currentService.category === "LAUNDRY"
                     ? "bg-sky-100 text-sky-700"
                     : "bg-blue-100 text-blue-700"
-                }`}
+                  }`}
               >
                 {currentService.category === "LAUNDRY" ? (
                   <WashingMachine size={18} />
@@ -378,7 +377,7 @@ export default function BookingForm({
       <button
         type="submit"
         disabled={isSubmitting}
-        className="flex w-full items-center justify-center gap-2 rounded-xl bg-blue-700 px-5 py-3.5 font-semibold text-white transition hover:bg-blue-800 disabled:cursor-not-allowed disabled:opacity-60"
+        className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#031c43] px-5 py-3.5 font-semibold text-white transition hover:bg-blue-800 disabled:cursor-not-allowed disabled:opacity-60"
       >
         {isSubmitting ? (
           <LoaderCircle className="animate-spin" size={19} />
