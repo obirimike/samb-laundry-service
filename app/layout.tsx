@@ -13,8 +13,12 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "SAMB's Services",
-  description: "Laundry and Kining Services ",
+  title: "SAMB's Services | Laundry & Klinin Services",
+  description: "Professional cleaning solutions and laundry services for homes and businesses.",
+  icons: {
+    icon: "/images/logo/samb-logo.jpeg",
+    apple: "/images/logo/samb-logo.jpeg",
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
