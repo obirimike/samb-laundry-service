@@ -14,6 +14,7 @@ import {
 import { db } from "@/lib/db";
 import NavBar from "@/components/layout/NavBar";
 import Footer from "@/components/layout/Footer";
+import ServiceCard from "@/components/services/ServiceCard";
 
 export default async function HomePage() {
     const services = await db.service.findMany({
@@ -158,35 +159,9 @@ export default async function HomePage() {
                             </Link>
                         </div>
 
-                        <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                        <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                             {services.map((service) => (
-                                <article
-                                    key={service.id}
-                                    className="group rounded-2xl border border-slate-200 bg-white p-6 transition hover:-translate-y-1 hover:border-blue-200 hover:shadow-lg"
-                                >
-                                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-50 text-blue-700">
-                                        {service.category === "LAUNDRY" ? (
-                                            <WashingMachine size={23} />
-                                        ) : (
-                                            <Sparkles size={23} />
-                                        )}
-                                    </div>
-                                    <p className="mt-5 text-xs font-bold uppercase tracking-wider text-blue-700">
-                                        {service.category === "LAUNDRY" ? "Laundry care" : "Cleaning"}
-                                    </p>
-                                    <h3 className="mt-2 text-xl font-bold text-slate-900">
-                                        {service.name}
-                                    </h3>
-                                    <p className="mt-3 min-h-12 text-sm leading-6 text-slate-600">
-                                        {service.description}
-                                    </p>
-                                    <Link
-                                        href={`/services/${service.slug}`}
-                                        className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-blue-700 group-hover:gap-3"
-                                    >
-                                        View details <ArrowRight size={16} />
-                                    </Link>
-                                </article>
+                                <ServiceCard key={service.id} service={service} />
                             ))}
                         </div>
                     </div>
