@@ -50,13 +50,13 @@ export default function Navbar() {
         <div className="hidden items-center gap-3 md:flex">
           <Link
             href="/login"
-            className="rounded-xl px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-100"
+            className="rounded-xl px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-300"
           >
             Sign in
           </Link>
           <Link
             href="/register"
-            className="rounded-xl bg-blue-700 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-800"
+            className="rounded-xl bg-[#031c43] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-gray-600"
           >
             Book a Service
           </Link>
@@ -83,7 +83,7 @@ export default function Navbar() {
             <Link href="/login" className="block rounded-lg px-3 py-3 text-sm font-semibold text-slate-700">
               Sign in
             </Link>
-            <Link href="/register" className="block rounded-lg bg-blue-700 px-3 py-3 text-center text-sm font-semibold text-white">
+            <Link href="/register" className="block rounded-lg bg-[#031c43] px-3 py-3 text-center text-sm font-semibold text-white">
               Book a Service
             </Link>
           </nav>
