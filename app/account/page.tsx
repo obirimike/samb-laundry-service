@@ -72,7 +72,7 @@ export default async function AccountPage() {
       </header>
 
       <div className="mx-auto max-w-7xl px-5 py-10">
-        <section className="rounded-3xl bg-gradient-to-r from-blue-700 via-indigo-700 to-purple-700 p-8 text-white sm:p-10">
+        <section className="rounded-3xl bg-[#031c43] p-8 text-white sm:p-10">
           <p className="text-sm font-medium text-blue-100">CUSTOMER DASHBOARD</p>
           <h1 className="mt-3 text-3xl font-bold sm:text-4xl">
             Welcome, {firstName}!
@@ -85,7 +85,7 @@ export default async function AccountPage() {
           
 <Link
   href="/book"
-  className="mt-5 inline-block rounded-xl border border-blue-200 px-5 py-3 font-semibold bg-white text-blue-700 hover:bg-gray-100"
+  className="mt-5 inline-block rounded-xl border border-blue-200 px-5 py-3 font-semibold bg-white text-blue-700 hover:bg-slate-100"
 >
   Request a service
 </Link>
@@ -93,7 +93,7 @@ export default async function AccountPage() {
 
 <Link
   href="/account/bookings"
-  className="mt-5 ml-5 inline-block rounded-xl border border-blue-200 px-5 py-3 font-semibold bg-blue text-white hover:bg-gray-100"
+  className="mt-5 ml-5 inline-block rounded-xl border border-blue-200 px-5 py-3 font-semibold bg-blue text-white hover:bg-gray-800"
 >
   My bookings
 </Link>
