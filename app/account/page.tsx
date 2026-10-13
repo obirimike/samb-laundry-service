@@ -46,7 +46,7 @@ export default async function AccountPage() {
   return (
     <main className="min-h-screen bg-slate-50">
       <header className="border-b border-slate-200 bg-white">
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-5">
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-1 px-5 py-5">
           <Link href="/" className="flex items-center gap-3 text-lg font-bold text-slate-900">
             <span className="relative flex h-9 w-9 shrink-0 overflow-hidden rounded-full border border-blue-200 bg-blue-900 shadow-sm">
               <Image
@@ -60,14 +60,22 @@ export default async function AccountPage() {
             <span>SAMB&apos;s Services</span>
           </Link>
 
-          <form action="/api/auth/signout" method="POST">
-            <button
-              type="submit"
-              className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100"
+          <div className="flex items-center gap-2">
+            <Link
+              href="/account/notifications"
+              className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-[#031c43] px-4 py-3 font-semibold text-white hover:bg-gray-800"
             >
-              Sign out
-            </button>
-          </form>
+              Notifications
+            </Link>
+            <form action="/api/auth/signout" method="POST">
+              <button
+                type="submit"
+                className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100"
+              >
+                Sign out
+              </button>
+            </form>
+          </div>
         </div>
       </header>
 
