@@ -1,4 +1,3 @@
-
 "use client";
 
 import Link from "next/link";
@@ -8,6 +7,42 @@ import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 import { Eye, EyeOff } from "lucide-react";
+
+/**
+ * Only allow safe, internal application paths.
+ * Prevents redirects to external websites or protocol-relative URLs.
+ */
+function getSafeCallbackUrl(callbackUrl: string | null): string {
+  if (
+    !callbackUrl ||
+    !callbackUrl.startsWith("/") ||
+    callbackUrl.startsWith("//") ||
+    callbackUrl.includes("\\")
+  ) {
+    return "/account";
+  }
+
+  try {
+    const baseUrl = window.location.origin;
+    const destination = new URL(callbackUrl, baseUrl);
+
+    if (destination.origin !== baseUrl) {
+      return "/account";
+    }
+
+    // Avoid redirecting back into authentication pages.
+    if (
+      destination.pathname === "/login" ||
+      destination.pathname === "/register"
+    ) {
+      return "/account";
+    }
+
+    return `${destination.pathname}${destination.search}${destination.hash}`;
+  } catch {
+    return "/account";
+  }
+}
 
 function LoginForm() {
   const router = useRouter();
@@ -36,7 +71,11 @@ function LoginForm() {
         return;
       }
 
-      router.push("/account");
+      const callbackUrl = getSafeCallbackUrl(
+        searchParams.get("callbackUrl")
+      );
+
+      router.replace(callbackUrl);
       router.refresh();
     } catch {
       setError("Unable to sign in right now. Please try again.");
@@ -49,7 +88,10 @@ function LoginForm() {
     <main className="flex min-h-screen items-center justify-center bg-gray-300 px-4 py-12">
       <div className="w-full max-w-md overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl">
         <div className="bg-[#031c43] px-8 py-9 text-white">
-          <Link href="/" className="text-sm font-semibold text-blue-100 hover:text-white">
+          <Link
+            href="/"
+            className="text-sm font-semibold text-blue-100 hover:text-white"
+          >
             ← Back to home
           </Link>
 
@@ -63,6 +105,7 @@ function LoginForm() {
                 className="object-cover"
               />
             </span>
+
             <div>
               <p className="text-xs font-bold uppercase tracking-[0.2em] text-blue-100">
                 SAMB&apos;S
@@ -72,6 +115,7 @@ function LoginForm() {
               </p>
             </div>
           </div>
+
           <h1 className="mt-4 text-3xl font-bold">Welcome back</h1>
           <p className="mt-2 text-sm leading-6 text-blue-100">
             Sign in to manage your service requests and bookings.
@@ -95,7 +139,10 @@ function LoginForm() {
           )}
 
           <div>
-            <label htmlFor="email" className="mb-2 block text-sm font-semibold text-slate-700">
+            <label
+              htmlFor="email"
+              className="mb-2 block text-sm font-semibold text-slate-700"
+            >
               Email address
             </label>
             <input
@@ -107,14 +154,18 @@ function LoginForm() {
               value={email}
               onChange={(event) => setEmail(event.target.value)}
               placeholder="you@example.com"
-              className="text-black w-full rounded-xl border border-slate-300 px-4 py-3 outline-none transition focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100"
+              className="w-full rounded-xl border border-slate-300 px-4 py-3 text-black outline-none transition focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100"
             />
           </div>
 
           <div>
-            <label htmlFor="password" className="mb-2 block text-sm font-semibold text-slate-700">
+            <label
+              htmlFor="password"
+              className="mb-2 block text-sm font-semibold text-slate-700"
+            >
               Password
             </label>
+
             <div className="relative">
               <input
                 id="password"
@@ -125,15 +176,20 @@ function LoginForm() {
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
                 placeholder="Enter your password"
-                className="text-black w-full rounded-xl border border-slate-300 px-4 py-3 pr-11 outline-none transition focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100"
+                className="w-full rounded-xl border border-slate-300 px-4 py-3 pr-11 text-black outline-none transition focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100"
               />
+
               <button
                 type="button"
                 onClick={() => setShowPassword((prev) => !prev)}
                 className="absolute inset-y-0 right-0 flex items-center pr-3.5 text-slate-400 hover:text-slate-600 focus:outline-none"
                 aria-label={showPassword ? "Hide password" : "Show password"}
               >
-                {showPassword ? <EyeOff size={19} /> : <Eye size={19} />}
+                {showPassword ? (
+                  <EyeOff size={19} />
+                ) : (
+                  <Eye size={19} />
+                )}
               </button>
             </div>
           </div>
@@ -148,7 +204,10 @@ function LoginForm() {
 
           <p className="text-center text-sm text-slate-600">
             Don&apos;t have an account?{" "}
-            <Link href="/register" className="font-semibold text-blue-900 hover:underline">
+            <Link
+              href="/register"
+              className="font-semibold text-blue-900 hover:underline"
+            >
               Create one
             </Link>
           </p>

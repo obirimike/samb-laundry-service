@@ -8,15 +8,22 @@ import {
     Sparkles,
     ShieldCheck,
     WashingMachine,
-    Building2,
-    Home,
 } from "lucide-react";
 import { db } from "@/lib/db";
 import NavBar from "@/components/layout/NavBar";
 import Footer from "@/components/layout/Footer";
 import ServiceCard from "@/components/services/ServiceCard";
+import SignOutMessage from "@/components/auth/SignOutMessage";
 
-export default async function HomePage() {
+type HomePageProps = {
+    searchParams: Promise<{ signedOut?: string }>;
+};
+
+export default async function HomePage({
+    searchParams,
+}: HomePageProps) {
+    const { signedOut } = await searchParams;
+
     const services = await db.service.findMany({
         where: { isActive: true },
         orderBy: [{ category: "asc" }, { name: "asc" }],
@@ -28,6 +35,9 @@ export default async function HomePage() {
             <NavBar />
 
             <main>
+                {signedOut === "1" && <SignOutMessage />}
+
+
                 <section className="relative overflow-hidden bg-slate-950 text-white">
                     <div className="absolute inset-0 bg-[#031c43]" />
                     <div className="absolute -right-24 -top-24 h-96 w-96 rounded-full bg-[#031c43]/20 blur-3xl" />
