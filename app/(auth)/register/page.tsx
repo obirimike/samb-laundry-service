@@ -245,7 +245,7 @@ export default function RegisterPage() {
           </p>
 
           <p className="text-center text-xs leading-5 text-slate-500">
-            Have a great experience with SAMB's Laundry & Klinin Services
+            Have a great experience with SAMB&apos;s Laundry & Klinin Services
           </p>
         </form>
       </div>
