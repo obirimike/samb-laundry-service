@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { hash } from "bcryptjs";
 import { z } from "zod";
 import { db } from "@/lib/db";
+import { limitRequest, rateLimitHeaders } from "@/lib/rate-limit";
 
 const registerSchema = z.object({
   name: z.string().trim().min(2).max(100),
@@ -13,6 +14,15 @@ const registerSchema = z.object({
 
 export async function POST(request: Request) {
   try {
+    const rateLimit = await limitRequest(request, "registration");
+
+    if (rateLimit && !rateLimit.success) {
+      return NextResponse.json(
+        { message: "Too many registration attempts. Please try again later." },
+        { status: 429, headers: rateLimitHeaders(rateLimit) }
+      );
+    }
+
     const body: unknown = await request.json();
     const parsed = registerSchema.safeParse(body);
 
