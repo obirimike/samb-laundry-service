@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { sendBookingStatusEmail } from "@/lib/emails";
 
 const updateSchema = z.object({
   status: z.enum([
@@ -171,6 +172,30 @@ export async function PATCH(request: Request, context: RouteContext) {
         } catch (error) {
           console.error("Failed to create booking notification:", error);
         }
+      }
+
+      try {
+        const customer = await db.user.findUnique({
+          where: { id: updated.customerId },
+          select: { name: true, email: true },
+        });
+
+        if (customer) {
+          const emailResult = await sendBookingStatusEmail({
+            to: customer.email,
+            customerName: customer.name,
+            bookingNumber: updated.bookingNumber,
+            status: updated.status,
+          });
+
+          if (!emailResult.success) {
+            console.error(
+              `Email notification was not sent for booking ${updated.bookingNumber}.`
+            );
+          }
+        }
+      } catch (error) {
+        console.error("Failed to send booking status email:", error);
       }
     }
 

@@ -4,6 +4,7 @@ import Image from "next/image";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
+import SignOutButton from "@/components/auth/SignOutButton";
 
 export default async function AccountPage() {
   const session = await auth();
@@ -67,14 +68,7 @@ export default async function AccountPage() {
             >
               Notifications
             </Link>
-            <form action="/api/auth/signout" method="POST">
-              <button
-                type="submit"
-                className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100"
-              >
-                Sign out
-              </button>
-            </form>
+           <SignOutButton />
           </div>
         </div>
       </header>
