@@ -59,7 +59,7 @@ export default function ServiceCard({
         <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent opacity-80" />
 
         {/* Category Pill Tag */}
-        <div className="absolute top-3.5 left-3.5 flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold tracking-wide shadow-sm backdrop-blur-md transition-colors ${} bg-white/90 text-slate-800">
+        <div className="absolute left-3.5 top-3.5 flex items-center gap-1.5 rounded-full bg-white/90 px-3 py-1 text-xs font-bold tracking-wide text-slate-800 shadow-sm backdrop-blur-md">
           {isLaundry ? (
             <WashingMachine size={14} className="text-sky-600" />
           ) : (
