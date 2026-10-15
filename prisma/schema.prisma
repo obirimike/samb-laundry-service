@@ -14,6 +14,8 @@ enum UserRole {
 enum ServiceCategory {
   CLEANING
   LAUNDRY
+  DOMESTIC_SUPPORT
+  PEST_CONTROL
 }
 
 enum BookingStatus {
