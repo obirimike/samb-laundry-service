@@ -141,6 +141,10 @@ export default async function AdminBookingDetailPage({
                     value={
                       booking.service.category === "LAUNDRY"
                         ? "Laundry"
+                        : booking.service.category === "DOMESTIC_SUPPORT"
+                        ? "Domestic Support"
+                        : booking.service.category === "PEST_CONTROL"
+                        ? "Pest Control"
                         : "Cleaning"
                     }
                   />
