@@ -1,6 +1,9 @@
 export const SERVICE_DEFAULT_IMAGES: Record<string, string> = {
+  // Laundry
   "laundry-services":
     "https://images.unsplash.com/photo-1545173168-9f1947eebb7f?auto=format&fit=crop&w=800&q=80",
+
+  // Cleaning
   "standard-cleaning":
     "https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=800&q=80",
   "deep-cleaning":
@@ -19,14 +22,41 @@ export const SERVICE_DEFAULT_IMAGES: Record<string, string> = {
     "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&w=800&q=80",
   "disinfection-sanitization":
     "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=800&q=80",
+
+  // Domestic Support
+  "provision-of-domestic-helpers":
+    "https://images.unsplash.com/photo-1581579438747-1dc8d17bbce4?auto=format&fit=crop&w=800&q=80",
+  "housekeeping-home-maintenance":
+    "https://images.unsplash.com/photo-1528740561666-dc2479dc08ab?auto=format&fit=crop&w=800&q=80",
+  "cooking-meal-preparation":
+    "https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&w=800&q=80",
+  "domestic-laundry-clothing-care":
+    "https://images.unsplash.com/photo-1517677208171-0bc6725a3e60?auto=format&fit=crop&w=800&q=80",
+  "temporary-regular-domestic-assistance":
+    "https://images.unsplash.com/photo-1584820927498-cfe5211fd8bf?auto=format&fit=crop&w=800&q=80",
+
+  // Pest Control
+  "residential-office-pest-control":
+    "https://images.unsplash.com/photo-1628177142898-93e36e4e3a50?auto=format&fit=crop&w=800&q=80",
+  "crawling-insect-control":
+    "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=800&q=80",
+  "rodent-control":
+    "https://images.unsplash.com/photo-1584744982491-665216d95f8b?auto=format&fit=crop&w=800&q=80",
+  "commercial-pest-treatment":
+    "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=800&q=80",
+  "scheduled-pest-prevention-maintenance":
+    "https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=800&q=80",
 };
 
 export const SERVICE_HIGHLIGHTS: Record<string, string[]> = {
+  // Laundry
   "laundry-services": [
     "Washing, drying & folding",
     "Ironing & delicate fabric care",
     "Eco-friendly, gentle detergents",
   ],
+
+  // Cleaning
   "standard-cleaning": [
     "Dusting, sweeping & mopping",
     "Kitchen & bathroom sanitization",
@@ -72,6 +102,60 @@ export const SERVICE_HIGHLIGHTS: Record<string, string[]> = {
     "High-touch point fogging",
     "Safe for kids and pets",
   ],
+
+  // Domestic Support
+  "provision-of-domestic-helpers": [
+    "Vetted & background-checked helpers",
+    "Tailored household matching",
+    "Full-time & part-time options",
+  ],
+  "housekeeping-home-maintenance": [
+    "Daily & weekly housekeeping routines",
+    "Surface dusting & floor maintenance",
+    "Kitchen & bathroom sanitation",
+  ],
+  "cooking-meal-preparation": [
+    "Custom dietary & menu planning",
+    "Fresh in-kitchen preparation",
+    "Kitchen cleanup & food storage",
+  ],
+  "domestic-laundry-clothing-care": [
+    "Hand & machine fabric care",
+    "Crisp ironing & garment steaming",
+    "Wardrobe folding & organization",
+  ],
+  "temporary-regular-domestic-assistance": [
+    "Flexible shift & hours scheduling",
+    "On-demand or recurring visits",
+    "Reliable household task support",
+  ],
+
+  // Pest Control
+  "residential-office-pest-control": [
+    "Home & workplace inspections",
+    "Safe, targeted treatments",
+    "Minimal disruption to routine",
+  ],
+  "crawling-insect-control": [
+    "Colony eradication & baiting",
+    "Nest & entry-point targeting",
+    "Odorless, long-lasting defense",
+  ],
+  "rodent-control": [
+    "Secure tamper-proof bait stations",
+    "Exclusion & entry-point sealing",
+    "Safe disposal & sanitization",
+  ],
+  "commercial-pest-treatment": [
+    "Health & safety regulation compliance",
+    "Custom commercial pest plans",
+    "Discreet after-hours servicing",
+  ],
+  "scheduled-pest-prevention-maintenance": [
+    "Quarterly & monthly preventative plans",
+    "Perimeter defense barriers",
+    "Continuous inspection reports",
+  ],
 };
 
 export function getServiceImageUrl(
@@ -87,9 +171,10 @@ export function getServiceImageUrl(
     return SERVICE_DEFAULT_IMAGES[slug];
   }
 
-  return category === "LAUNDRY"
-    ? "/images/services/laundry-default.svg"
-    : "/images/services/cleaning-default.svg";
+  if (category === "LAUNDRY") return "/images/services/laundry-default.svg";
+  if (category === "DOMESTIC_SUPPORT") return "/images/services/domestic-default.svg";
+  if (category === "PEST_CONTROL") return "/images/services/pest-default.svg";
+  return "/images/services/cleaning-default.svg";
 }
 
 export function getServiceHighlights(slug: string, category: string): string[] {
@@ -97,7 +182,15 @@ export function getServiceHighlights(slug: string, category: string): string[] {
     return SERVICE_HIGHLIGHTS[slug];
   }
 
-  return category === "LAUNDRY"
-    ? ["Professional wash & fold", "Gentle fabric care", "Reliable scheduling"]
-    : ["Thorough surface cleaning", "Quality inspected", "Flexible scheduling"];
+  if (category === "LAUNDRY") {
+    return ["Professional wash & fold", "Gentle fabric care", "Reliable scheduling"];
+  }
+  if (category === "DOMESTIC_SUPPORT") {
+    return ["Vetted & reliable helpers", "Tailored to your household", "Flexible scheduling"];
+  }
+  if (category === "PEST_CONTROL") {
+    return ["Targeted pest eradication", "Safe & compliant methods", "Long-term protection"];
+  }
+
+  return ["Thorough surface cleaning", "Quality inspected", "Flexible scheduling"];
 }
