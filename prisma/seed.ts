@@ -7,6 +7,7 @@ const adapter = new PrismaPg(pool);
 const prisma = new PrismaClient({ adapter });
 
 const services = [
+  // Cleaning Services
   {
     name: "Standard Cleaning",
     slug: "standard-cleaning",
@@ -70,6 +71,8 @@ const services = [
       "Cleaning and sanitization services personalized to the requirements of a space.",
     category: ServiceCategory.CLEANING,
   },
+
+  // Laundry Services
   {
     name: "Laundry Services",
     slug: "laundry-services",
@@ -77,9 +80,91 @@ const services = [
       "Laundry services including washing, drying, folding, ironing, and fabric care.",
     category: ServiceCategory.LAUNDRY,
   },
+
+  // House Help and Domestic Support Services
+  {
+    name: "Provision of Domestic Helpers for Households",
+    slug: "provision-of-domestic-helpers",
+    description:
+      "Vetted, dependable domestic helpers provided to assist with everyday household chores, routines, and family care.",
+    category: ServiceCategory.DOMESTIC_SUPPORT,
+  },
+  {
+    name: "Housekeeping and General Home Maintenance",
+    slug: "housekeeping-home-maintenance",
+    description:
+      "Comprehensive housekeeping, daily tidying, floor care, dusting, and ongoing home upkeep to maintain pristine living spaces.",
+    category: ServiceCategory.DOMESTIC_SUPPORT,
+  },
+  {
+    name: "Cooking and Meal Preparation",
+    slug: "cooking-meal-preparation",
+    description:
+      "Wholesome, customized home-cooked meals prepared in your kitchen according to your family's tastes, dietary plans, and agreed schedule.",
+    category: ServiceCategory.DOMESTIC_SUPPORT,
+  },
+  {
+    name: "Laundry, Ironing, and Clothing Care",
+    slug: "domestic-laundry-clothing-care",
+    description:
+      "Dedicated in-home washing, precise ironing, garment pressing, wardrobe organization, and gentle clothing care.",
+    category: ServiceCategory.DOMESTIC_SUPPORT,
+  },
+  {
+    name: "Temporary and Regular Domestic Assistance",
+    slug: "temporary-regular-domestic-assistance",
+    description:
+      "Flexible domestic support tailored to your schedule, whether you need temporary emergency help, holiday assistance, or ongoing regular service.",
+    category: ServiceCategory.DOMESTIC_SUPPORT,
+  },
+
+  // Fumigation and Pest Control Services
+  {
+    name: "Residential and Office Pest Control",
+    slug: "residential-office-pest-control",
+    description:
+      "Targeted pest eradication treatments designed for residential homes, apartments, and corporate workspaces to keep premises pest-free.",
+    category: ServiceCategory.PEST_CONTROL,
+  },
+  {
+    name: "Cockroach, Ant, and Crawling-Insect Control",
+    slug: "crawling-insect-control",
+    description:
+      "Specialized eradication protocols to eliminate cockroach infestations, ant colonies, and destructive crawling insects at the root.",
+    category: ServiceCategory.PEST_CONTROL,
+  },
+  {
+    name: "Rodent Control",
+    slug: "rodent-control",
+    description:
+      "Strategic rodent management utilizing secure baiting stations, humane trapping, and structural entry-point exclusion methods.",
+    category: ServiceCategory.PEST_CONTROL,
+  },
+  {
+    name: "Pest Treatment for Commercial Premises",
+    slug: "commercial-pest-treatment",
+    description:
+      "Industrial-grade pest control and compliant sanitation treatments tailored for warehouses, restaurants, retail outlets, and commercial buildings.",
+    category: ServiceCategory.PEST_CONTROL,
+  },
+  {
+    name: "Scheduled Pest Prevention and Maintenance",
+    slug: "scheduled-pest-prevention-maintenance",
+    description:
+      "Proactive monitoring and routine scheduled pest barrier applications to guarantee long-term protection against re-infestation.",
+    category: ServiceCategory.PEST_CONTROL,
+  },
 ];
 
 async function main() {
+  // Clean up any legacy placeholder services if they exist and have no bookings
+  await prisma.service.deleteMany({
+    where: {
+      slug: { in: ["domestic-support", "pest-control"] },
+      bookings: { none: {} },
+    },
+  });
+
   for (const service of services) {
     await prisma.service.upsert({
       where: { slug: service.slug },
