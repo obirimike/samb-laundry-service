@@ -1,4 +1,4 @@
-export type ServiceCategory = "CLEANING" | "LAUNDRY";
+export type ServiceCategory = "CLEANING" | "LAUNDRY" | "DOMESTIC_SUPPORT" | "PEST_CONTROL";
 
 export interface ServiceItem {
   id: string;
