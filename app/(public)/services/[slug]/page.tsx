@@ -10,6 +10,8 @@ import {
   Sparkles,
   WashingMachine,
   CalendarCheck,
+  Home,
+  Bug,
 } from "lucide-react";
 import { db } from "@/lib/db";
 import {
@@ -54,7 +56,45 @@ export default async function ServiceDetailPage({
     notFound();
   }
 
-  const isLaundry = service.category === "LAUNDRY";
+  function getCategoryMeta(category: string) {
+    switch (category) {
+      case "LAUNDRY":
+        return {
+          label: "Laundry Care",
+          icon: <WashingMachine size={22} />,
+          badgeColor: "bg-sky-500/20 text-sky-300",
+          textColor: "text-sky-300",
+          checkColor: "text-sky-600",
+        };
+      case "DOMESTIC_SUPPORT":
+        return {
+          label: "House Help & Domestic Support",
+          icon: <Home size={22} />,
+          badgeColor: "bg-emerald-500/20 text-emerald-300",
+          textColor: "text-emerald-300",
+          checkColor: "text-emerald-600",
+        };
+      case "PEST_CONTROL":
+        return {
+          label: "Fumigation & Pest Control",
+          icon: <Bug size={22} />,
+          badgeColor: "bg-amber-500/20 text-amber-300",
+          textColor: "text-amber-300",
+          checkColor: "text-amber-600",
+        };
+      case "CLEANING":
+      default:
+        return {
+          label: "Cleaning Service",
+          icon: <Sparkles size={22} />,
+          badgeColor: "bg-blue-500/20 text-blue-300",
+          textColor: "text-blue-300",
+          checkColor: "text-blue-600",
+        };
+    }
+  }
+
+  const catMeta = getCategoryMeta(service.category);
   const imageUrl = getServiceImageUrl(service.slug, service.category, service.imageUrl);
   const highlights = getServiceHighlights(service.slug, service.category);
 
@@ -74,15 +114,11 @@ export default async function ServiceDetailPage({
           <div className="mt-8 flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
             <div className="max-w-2xl">
               <div className="flex items-center gap-2">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-500/20 text-blue-300">
-                  {isLaundry ? (
-                    <WashingMachine size={22} />
-                  ) : (
-                    <Sparkles size={22} />
-                  )}
+                <div className={`flex h-10 w-10 items-center justify-center rounded-xl ${catMeta.badgeColor}`}>
+                  {catMeta.icon}
                 </div>
-                <span className="text-xs font-bold uppercase tracking-[0.18em] text-blue-300">
-                  {isLaundry ? "Laundry Care" : "Cleaning Service"}
+                <span className={`text-xs font-bold uppercase tracking-[0.18em] ${catMeta.textColor}`}>
+                  {catMeta.label}
                 </span>
               </div>
 
@@ -151,7 +187,7 @@ export default async function ServiceDetailPage({
                 >
                   <CheckCircle2
                     size={18}
-                    className={isLaundry ? "shrink-0 text-sky-600" : "shrink-0 text-blue-600"}
+                    className={`shrink-0 ${catMeta.checkColor}`}
                   />
                   <span className="text-sm font-medium text-slate-700">{item}</span>
                 </div>
@@ -203,7 +239,7 @@ export default async function ServiceDetailPage({
                 Category
               </p>
               <p className="mt-1 font-bold text-slate-900">
-                {isLaundry ? "Laundry Care" : "Cleaning Service"}
+                {catMeta.label}
               </p>
             </div>
 
