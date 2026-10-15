@@ -5,12 +5,14 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { LoaderCircle, Plus, Save } from "lucide-react";
 
+import { ServiceCategory } from "@/types/service";
+
 type ServiceItem = {
   id: string;
   name: string;
   slug: string;
   description: string;
-  category: "CLEANING" | "LAUNDRY";
+  category: ServiceCategory;
   imageUrl: string | null;
   isActive: boolean;
 };
@@ -19,7 +21,7 @@ const emptyForm = {
   name: "",
   slug: "",
   description: "",
-  category: "CLEANING" as "CLEANING" | "LAUNDRY",
+  category: "CLEANING" as ServiceCategory,
   imageUrl: "",
 };
 
@@ -190,11 +192,13 @@ export default function ServiceManager({
             Category
             <select
               value={form.category}
-              onChange={(event) => updateField("category", event.target.value)}
+              onChange={(event) => updateField("category", event.target.value as ServiceCategory)}
               className="mt-2 w-full rounded-xl border border-slate-200 bg-white px-4 py-3 font-normal outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
             >
               <option value="CLEANING">Cleaning</option>
               <option value="LAUNDRY">Laundry</option>
+              <option value="DOMESTIC_SUPPORT">Domestic Support</option>
+              <option value="PEST_CONTROL">Pest Control</option>
             </select>
           </label>
 
