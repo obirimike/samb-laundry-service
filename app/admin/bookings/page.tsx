@@ -116,6 +116,10 @@ export default async function AdminBookingsPage() {
                         {booking.service.name} ·{" "}
                         {booking.service.category === "LAUNDRY"
                           ? "Laundry"
+                          : booking.service.category === "DOMESTIC_SUPPORT"
+                          ? "Domestic Support"
+                          : booking.service.category === "PEST_CONTROL"
+                          ? "Pest Control"
                           : "Cleaning"}
                       </p>
                       <p className="mt-1 text-sm text-slate-500">
