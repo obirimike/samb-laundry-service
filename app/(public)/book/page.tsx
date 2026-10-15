@@ -41,7 +41,7 @@ export default async function BookingPage({
   });
 
   const selectedService = query.service
-    ? services.find((service) => service.slug === query.service)
+    ? services.find((service) => service.slug === query.service || service.id === query.service)
     : undefined;
 
   return (
