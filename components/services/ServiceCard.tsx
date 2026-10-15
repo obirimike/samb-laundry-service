@@ -9,6 +9,8 @@ import {
   Sparkles,
   WashingMachine,
   CalendarCheck,
+  Home,
+  Bug,
 } from "lucide-react";
 import { ServiceItem } from "@/types/service";
 import {
@@ -21,30 +23,57 @@ interface ServiceCardProps {
   featured?: boolean;
 }
 
+function getCategoryInfo(category: string) {
+  switch (category) {
+    case "LAUNDRY":
+      return {
+        label: "Laundry Care",
+        icon: <WashingMachine size={14} className="text-sky-600" />,
+        fallback: "/images/services/laundry-default.svg",
+      };
+    case "DOMESTIC_SUPPORT":
+      return {
+        label: "Domestic Support",
+        icon: <Home size={14} className="text-emerald-600" />,
+        fallback: "/images/services/domestic-default.svg",
+      };
+    case "PEST_CONTROL":
+      return {
+        label: "Pest Control",
+        icon: <Bug size={14} className="text-amber-600" />,
+        fallback: "/images/services/pest-default.svg",
+      };
+    case "CLEANING":
+    default:
+      return {
+        label: "Cleaning",
+        icon: <Sparkles size={14} className="text-blue-600" />,
+        fallback: "/images/services/cleaning-default.svg",
+      };
+  }
+}
+
 export default function ServiceCard({
   service,
   featured = false,
 }: ServiceCardProps) {
-  const isLaundry = service.category === "LAUNDRY";
+  const catInfo = getCategoryInfo(service.category);
   const primaryImageUrl = getServiceImageUrl(
     service.slug,
     service.category,
     service.imageUrl
   );
 
-  const fallbackSvg = isLaundry
-    ? "/images/services/laundry-default.svg"
-    : "/images/services/cleaning-default.svg";
-
   const [imgSrc, setImgSrc] = useState(primaryImageUrl);
   const highlights = getServiceHighlights(service.slug, service.category);
 
   return (
     <article
-      className={`group flex flex-col overflow-hidden rounded-2xl border bg-white transition-all duration-300 hover:-translate-y-1 hover:shadow-xl ${featured
-        ? "border-blue-300 ring-2 ring-blue-500/20 shadow-md"
-        : "border-slate-200/90 hover:border-blue-300"
-        }`}
+      className={`group flex flex-col overflow-hidden rounded-2xl border bg-white transition-all duration-300 hover:-translate-y-1 hover:shadow-xl ${
+        featured
+          ? "border-blue-300 ring-2 ring-blue-500/20 shadow-md"
+          : "border-slate-200/90 hover:border-blue-300"
+      }`}
     >
       {/* Image Area */}
       <div className="relative aspect-[16/10] w-full overflow-hidden bg-slate-100">
@@ -54,20 +83,14 @@ export default function ServiceCard({
           fill
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
           className="object-cover transition-transform duration-500 group-hover:scale-105"
-          onError={() => setImgSrc(fallbackSvg)}
+          onError={() => setImgSrc(catInfo.fallback)}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent opacity-80" />
 
         {/* Category Pill Tag */}
         <div className="absolute left-3.5 top-3.5 flex items-center gap-1.5 rounded-full bg-white/90 px-3 py-1 text-xs font-bold tracking-wide text-slate-800 shadow-sm backdrop-blur-md">
-          {isLaundry ? (
-            <WashingMachine size={14} className="text-sky-600" />
-          ) : (
-            <Sparkles size={14} className="text-blue-600" />
-          )}
-          <span className="capitalize">
-            {isLaundry ? "Laundry Care" : "Cleaning"}
-          </span>
+          {catInfo.icon}
+          <span>{catInfo.label}</span>
         </div>
 
         {/* Optional Featured / Instant badge */}
@@ -98,34 +121,27 @@ export default function ServiceCard({
               key={index}
               className="flex items-center gap-2 text-xs font-medium text-slate-600"
             >
-              <CheckCircle2
-                size={14}
-                className={isLaundry ? "text-sky-600 shrink-0" : "text-blue-600 shrink-0"}
-              />
-              <span className="truncate">{item}</span>
+              <CheckCircle2 size={14} className="shrink-0 text-emerald-500" />
+              <span className="line-clamp-1">{item}</span>
             </div>
           ))}
         </div>
 
-        {/* Card Actions */}
-        <div className="mt-6 flex items-center justify-between gap-3 border-t border-slate-100 pt-4">
+        {/* Action Buttons */}
+        <div className="mt-6 flex items-center gap-2 pt-2">
           <Link
             href={`/services/${service.slug}`}
-            className="inline-flex items-center gap-1 text-xs font-semibold text-slate-700 transition hover:text-blue-600"
+            className="flex-1 rounded-xl border border-slate-200 bg-white py-2.5 text-center text-xs font-bold text-slate-700 transition hover:bg-slate-50 hover:text-slate-900"
           >
             Details
-            <ArrowRight size={14} className="transition group-hover:translate-x-0.5" />
           </Link>
 
           <Link
-            href={`/book?service=${service.slug}`}
-            className={`inline-flex items-center gap-1.5 rounded-xl px-4 py-2 text-xs font-bold text-white shadow-sm transition hover:shadow-md ${isLaundry
-              ? "bg-[#031c43] hover:bg-sky-700"
-              : "bg-[#031c43] hover:bg-[#031c43]"
-              }`}
+            href={`/book?service=${service.id}`}
+            className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl bg-[#031c43] py-2.5 text-center text-xs font-bold text-white shadow-sm transition hover:bg-blue-900"
           >
             <CalendarCheck size={14} />
-            Book now
+            Book
           </Link>
         </div>
       </div>
