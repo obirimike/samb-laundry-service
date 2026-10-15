@@ -14,7 +14,7 @@ const updateSchema = z.object({
     .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/)
     .optional(),
   description: z.string().trim().min(10).max(2000).optional(),
-  category: z.enum(["CLEANING", "LAUNDRY"]).optional(),
+  category: z.enum(["CLEANING", "LAUNDRY", "DOMESTIC_SUPPORT", "PEST_CONTROL"]).optional(),
   imageUrl: z.union([z.string().trim().url(), z.literal("")]).nullable().optional(),
   isActive: z.boolean().optional(),
 }).refine((data) => Object.keys(data).length > 0, {
