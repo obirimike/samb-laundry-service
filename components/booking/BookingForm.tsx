@@ -3,15 +3,60 @@
 
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
-import { LoaderCircle, Send, Sparkles, WashingMachine } from "lucide-react";
+import { LoaderCircle, Send, Sparkles, WashingMachine, Home, Bug } from "lucide-react";
+import { ServiceCategory } from "@/types/service";
 
 type ServiceOption = {
   id: string;
   name: string;
-  category: "CLEANING" | "LAUNDRY";
+  category: ServiceCategory;
   slug?: string;
   description?: string;
 };
+
+function formatServiceCategory(category: ServiceCategory) {
+  switch (category) {
+    case "LAUNDRY":
+      return "Laundry";
+    case "DOMESTIC_SUPPORT":
+      return "Domestic Support";
+    case "PEST_CONTROL":
+      return "Pest Control";
+    case "CLEANING":
+    default:
+      return "Cleaning";
+  }
+}
+
+function getServiceCategoryPreview(category: ServiceCategory) {
+  switch (category) {
+    case "LAUNDRY":
+      return {
+        icon: <WashingMachine size={18} />,
+        containerClass: "bg-sky-100 text-sky-700",
+        label: "Professional Laundry Care",
+      };
+    case "DOMESTIC_SUPPORT":
+      return {
+        icon: <Home size={18} />,
+        containerClass: "bg-emerald-100 text-emerald-700",
+        label: "Domestic Help & Household Support",
+      };
+    case "PEST_CONTROL":
+      return {
+        icon: <Bug size={18} />,
+        containerClass: "bg-amber-100 text-amber-700",
+        label: "Fumigation & Pest Control",
+      };
+    case "CLEANING":
+    default:
+      return {
+        icon: <Sparkles size={18} />,
+        containerClass: "bg-blue-100 text-blue-700",
+        label: "Comprehensive Cleaning",
+      };
+  }
+}
 
 type BookingFormProps = {
   services: ServiceOption[];
@@ -177,42 +222,36 @@ export default function BookingForm({
           <option value="">Choose a service</option>
           {services.map((service) => (
             <option key={service.id} value={service.id}>
-              {service.name} — {service.category === "LAUNDRY" ? "Laundry" : "Cleaning"}
+              {service.name} — {formatServiceCategory(service.category)}
             </option>
           ))}
         </select>
 
-        {currentService && (
-          <div className="mt-3 flex items-center justify-between rounded-xl border border-blue-100 bg-blue-50/70 p-3.5">
-            <div className="flex items-center gap-3">
-              <div
-                className={`flex h-9 w-9 items-center justify-center rounded-lg ${currentService.category === "LAUNDRY"
-                    ? "bg-sky-100 text-sky-700"
-                    : "bg-blue-100 text-blue-700"
-                  }`}
-              >
-                {currentService.category === "LAUNDRY" ? (
-                  <WashingMachine size={18} />
-                ) : (
-                  <Sparkles size={18} />
-                )}
+        {currentService && (() => {
+          const preview = getServiceCategoryPreview(currentService.category);
+          return (
+            <div className="mt-3 flex items-center justify-between rounded-xl border border-blue-100 bg-blue-50/70 p-3.5">
+              <div className="flex items-center gap-3">
+                <div
+                  className={`flex h-9 w-9 items-center justify-center rounded-lg ${preview.containerClass}`}
+                >
+                  {preview.icon}
+                </div>
+                <div>
+                  <p className="text-sm font-bold text-slate-900">
+                    {currentService.name}
+                  </p>
+                  <p className="text-xs text-slate-500">
+                    {preview.label}
+                  </p>
+                </div>
               </div>
-              <div>
-                <p className="text-sm font-bold text-slate-900">
-                  {currentService.name}
-                </p>
-                <p className="text-xs text-slate-500">
-                  {currentService.category === "LAUNDRY"
-                    ? "Professional Laundry Care"
-                    : "Comprehensive Cleaning"}
-                </p>
-              </div>
+              <span className="rounded-full border border-blue-200/60 bg-white px-2.5 py-1 text-xs font-semibold text-blue-700 shadow-xs">
+                Selected
+              </span>
             </div>
-            <span className="rounded-full border border-blue-200/60 bg-white px-2.5 py-1 text-xs font-semibold text-blue-700 shadow-xs">
-              Selected
-            </span>
-          </div>
-        )}
+          );
+        })()}
       </section>
 
       <section className="border-t border-slate-200 pt-6">
