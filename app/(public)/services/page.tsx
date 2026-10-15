@@ -5,9 +5,9 @@ import ServiceGrid from "@/components/services/ServiceGrid";
 import { ServiceItem } from "@/types/service";
 
 export const metadata = {
-  title: "Services & Laundry | SAMB's Cleaning Services",
+  title: "Services | SAMB's Cleaning, Laundry, Domestic Support & Pest Control",
   description:
-    "Explore SAMB's professional laundry care and comprehensive cleaning solutions for homes, businesses, and venues.",
+    "Explore SAMB's professional laundry care, comprehensive cleaning, house help domestic support, and pest control services.",
 };
 
 export default async function ServicesPage() {
@@ -21,7 +21,7 @@ export default async function ServicesPage() {
     name: service.name,
     slug: service.slug,
     description: service.description,
-    category: service.category as "CLEANING" | "LAUNDRY",
+    category: service.category,
     imageUrl: service.imageUrl,
     isActive: service.isActive,
   }));
@@ -34,14 +34,13 @@ export default async function ServicesPage() {
         <div className="relative mx-auto max-w-7xl">
           <div className="inline-flex items-center gap-2 rounded-full border border-blue-400/20 bg-blue-500/10 px-3.5 py-1.5 text-xs font-semibold text-blue-300">
             <Sparkles size={14} />
-            Professional Cleaning &amp; Laundry
+            Professional Services &amp; Care
           </div>
           <h1 className="mt-4 max-w-3xl text-3xl font-black tracking-tight sm:text-5xl">
-            Our Cleaning &amp; Laundry Services
+            Our Services
           </h1>
           <p className="mt-4 max-w-2xl text-base leading-relaxed text-slate-300 sm:text-lg">
-            Choose from personalized cleaning packages and full laundry care.
-            Every request is handled with meticulous attention to detail and care.
+            From cleaning solutions and laundry care to dedicated domestic support and pest control, explore our full spectrum of specialized services.
           </p>
         </div>
       </section>
@@ -57,23 +56,17 @@ export default async function ServicesPage() {
               Not sure which service fits your space?
             </h2>
             <p className="mt-3 leading-relaxed text-blue-100">
-              Tell us about your requirements or custom laundry schedule. Our
-              team will review your request and help you find the right fit.
+              Tell us about your requirements, schedule, or pest concerns. Our
+              team will recommend the best solution tailored to your exact needs.
             </p>
-            <div className="mt-6 flex flex-wrap gap-4">
-              <Link
-                href="/book"
-                className="inline-flex items-center gap-2 rounded-xl bg-white px-5 py-3 text-sm font-bold text-blue-900 transition hover:bg-blue-50"
-              >
-                Request custom booking <ArrowRight size={16} />
-              </Link>
-              <Link
-                href="/contact"
-                className="inline-flex items-center gap-2 rounded-xl border border-white/30 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
-              >
-                Contact our team
-              </Link>
-            </div>
+          </div>
+          <div className="mt-6">
+            <Link
+              href="/contact"
+              className="inline-flex items-center gap-2 rounded-xl bg-white px-6 py-3 font-semibold text-blue-950 transition hover:bg-blue-50"
+            >
+              Contact our team <ArrowRight size={18} />
+            </Link>
           </div>
         </div>
       </section>
