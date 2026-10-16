@@ -9,6 +9,7 @@ import {
   ClipboardList,
   Clock3,
   Users,
+  Calendar,
 } from "lucide-react";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
@@ -148,6 +149,13 @@ export default async function AdminDashboardPage() {
             </Link>
 
             <Link
+              href="/admin/calendar"
+              className="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-700 px-5 py-3 font-semibold text-white hover:bg-blue-800"
+            >
+            <Calendar size={17} /> Booking Calendar
+            </Link>
+
+            <Link
               href="/admin/customers"
               className="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-700 px-5 py-3 font-semibold text-white hover:bg-blue-800"
             >
@@ -161,6 +169,27 @@ export default async function AdminDashboardPage() {
               className="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-700 px-5 py-3 font-semibold text-white hover:bg-blue-800"
             >
             <BriefcaseBusiness size={17} /> Manage services
+            </Link>
+
+            <Link
+              href="/admin/quotes"
+              className="group flex flex-col justify-between gap-3 rounded-2xl border border-slate-200 bg-white p-5 hover:border-blue-300 hover:shadow-md"
+            >
+              <div className="flex items-center justify-between">
+    <div>
+      <h2 className="text-lg font-bold text-slate-900">
+        Quotes &amp; Pricing
+      </h2>
+      <p className="mt-2 text-sm leading-6 text-slate-600">
+        Create service quotations, itemize costs, and review quote statuses.
+      </p>
+    </div>
+
+    <span className="ml-4 text-xl text-blue-700 transition group-hover:translate-x-1">
+      →
+    </span>
+  </div>
+
             </Link>
 
 
