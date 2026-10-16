@@ -71,7 +71,12 @@ function calculateQuote(items: z.infer<typeof lineItemSchema>[]) {
 
   return {
     amount: (totalPesewas / 100).toFixed(2),
-    breakdown: lineItems.map(({ totalPesewas: _, ...item }) => item),
+    breakdown: lineItems.map((item) => ({
+      description: item.description,
+      quantity: item.quantity,
+      unitPrice: item.unitPrice,
+      total: item.total,
+    })),
   };
 }
 
