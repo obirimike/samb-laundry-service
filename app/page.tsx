@@ -11,9 +11,13 @@ import {
 } from "lucide-react";
 import { db } from "@/lib/db";
 import NavBar from "@/components/layout/NavBar";
+import dynamic from "next/dynamic";
 import Footer from "@/components/layout/Footer";
 import ServiceCard from "@/components/services/ServiceCard";
-import SignOutMessage from "@/components/auth/SignOutMessage";
+
+const SignOutMessage = dynamic(
+  () => import("@/components/auth/SignOutMessage")
+);
 
 type HomePageProps = {
     searchParams: Promise<{ signedOut?: string }>;
@@ -185,6 +189,7 @@ export default async function HomePage({
                                     src="/images/logo/samb-logo.jpeg"
                                     alt="SAMB's Logo"
                                     fill
+                                    loading="lazy"
                                     sizes="64px"
                                     className="object-cover"
                                 />
