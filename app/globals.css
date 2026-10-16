@@ -38,8 +38,41 @@ body {
   background: linear-gradient(
     90deg,
     #e2e8f0 0%,
-    #f8fafc 50%,
+    #f1f5f9 50%,
     #e2e8f0 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.8s infinite ease-in-out;
+}
+
+.animate-shimmer-dark {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.05) 0%,
+    rgba(255, 255, 255, 0.14) 50%,
+    rgba(255, 255, 255, 0.05) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.8s infinite ease-in-out;
+}
+
+.animate-shimmer-blue {
+  background: linear-gradient(
+    90deg,
+    rgba(3, 28, 67, 0.8) 0%,
+    rgba(29, 78, 216, 0.35) 50%,
+    rgba(3, 28, 67, 0.8) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.8s infinite ease-in-out;
+}
+
+.animate-shimmer-glass {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.08) 0%,
+    rgba(255, 255, 255, 0.22) 50%,
+    rgba(255, 255, 255, 0.08) 100%
   );
   background-size: 200% 100%;
   animation: shimmer 1.8s infinite ease-in-out;

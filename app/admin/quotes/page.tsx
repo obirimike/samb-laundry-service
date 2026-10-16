@@ -1,7 +1,28 @@
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
-import QuoteManagement from "@/components/admin/QuoteManagement";
+import nextDynamic from "next/dynamic";
+import Skeleton from "@/components/ui/Skeleton";
+
+const QuoteManagement = nextDynamic(
+  () => import("@/components/admin/QuoteManagement"),
+  {
+    loading: () => (
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <Skeleton className="h-8 w-48 rounded-lg" />
+          <Skeleton className="h-10 w-44 rounded-xl bg-blue-900/30" />
+        </div>
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+          {[0, 1, 2, 3].map((i) => (
+            <Skeleton key={i} className="h-20 rounded-2xl" />
+          ))}
+        </div>
+        <Skeleton className="h-96 w-full rounded-2xl" />
+      </div>
+    ),
+  }
+);
 
 export const dynamic = "force-dynamic";
 

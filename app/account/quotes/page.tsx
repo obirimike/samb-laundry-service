@@ -1,7 +1,27 @@
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
-import CustomerQuotes from "@/components/account/CustomerQuotes";
+import nextDynamic from "next/dynamic";
+import Skeleton from "@/components/ui/Skeleton";
+
+const CustomerQuotes = nextDynamic(
+  () => import("@/components/account/CustomerQuotes"),
+  {
+    loading: () => (
+      <div className="space-y-6">
+        <header className="rounded-2xl bg-gradient-to-r from-blue-800 to-indigo-700 p-6 text-white sm:p-8 space-y-3">
+          <Skeleton className="h-4 w-28 rounded" variant="glass" />
+          <Skeleton className="h-8 w-60 rounded-xl" variant="glass" />
+          <Skeleton className="h-4 w-96 max-w-full rounded" variant="glass" />
+        </header>
+        <div className="space-y-4">
+          <Skeleton className="h-48 w-full rounded-2xl" />
+          <Skeleton className="h-48 w-full rounded-2xl" />
+        </div>
+      </div>
+    ),
+  }
+);
 
 export const dynamic = "force-dynamic";
 
