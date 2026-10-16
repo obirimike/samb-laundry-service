@@ -14,6 +14,7 @@ export default function Footer() {
                 src="/images/logo/samb-logo.jpeg"
                 alt="SAMB's Services Logo"
                 fill
+                loading="lazy"
                 sizes="40px"
                 className="object-cover"
               />
