@@ -25,6 +25,7 @@ export default function AboutPage() {
               src="/images/hero/samb-hero.jpeg"
               alt="SAMB's Laundry & Klinin Services team"
               fill
+              loading="lazy"
               sizes="(max-width: 1024px) 100vw, 50vw"
               className="object-cover"
             />
