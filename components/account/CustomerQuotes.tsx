@@ -121,24 +121,11 @@ export default function CustomerQuotes({ initialQuotes }: Props) {
   const [message, setMessage] = useState("");
 
   const pendingCount = useMemo(
-    () =>
-      quotes.filter(
-        (quote) =>
-          quote.status === "SENT" &&
-          (!quote.expiresAt || new Date(quote.expiresAt) > new Date())
-      ).length,
+    () => quotes.filter((quote) => quote.status === "SENT").length,
     [quotes]
   );
 
   function currentStatus(quote: QuoteRecord): QuoteStatus {
-    if (
-      quote.status === "SENT" &&
-      quote.expiresAt &&
-      new Date(quote.expiresAt).getTime() <= Date.now()
-    ) {
-      return "EXPIRED";
-    }
-
     return quote.status;
   }
 
@@ -212,8 +199,7 @@ export default function CustomerQuotes({ initialQuotes }: Props) {
         </p>
         <h1 className="mt-2 text-3xl font-bold">My quotations</h1>
         <p className="mt-3 max-w-2xl text-sm leading-6 text-blue-100">
-          Review your service estimates, check the itemized costs, and respond
-          to quotations from SAMB's Laundry and Klinin Services.
+          Review your service estimates, check the itemized costs, and respond to quotations from SAMB&apos;s Laundry and Klinin Services.
         </p>
         <div className="mt-5 inline-flex rounded-full bg-white/15 px-4 py-2 text-sm font-medium">
           {pendingCount} awaiting your response
