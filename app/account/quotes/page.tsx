@@ -48,27 +48,36 @@ export default async function AccountQuotesPage() {
     },
   });
 
-  const initialQuotes = quotes.map((quote) => ({
-    id: quote.id,
-    quoteNumber: quote.quoteNumber,
-    amount: quote.amount.toString(),
-    currency: quote.currency,
-    status: quote.status,
-    breakdown: quote.breakdown,
-    terms: quote.terms,
-    createdAt: quote.createdAt.toISOString(),
-    sentAt: quote.sentAt?.toISOString() ?? null,
-    expiresAt: quote.expiresAt?.toISOString() ?? null,
-    respondedAt: quote.respondedAt?.toISOString() ?? null,
-    responseNote: quote.responseNote,
-    booking: {
-      bookingNumber: quote.booking.bookingNumber,
-      status: quote.booking.status,
-      preferredDate: quote.booking.preferredDate.toISOString(),
-      preferredTime: quote.booking.preferredTime,
-      service: quote.booking.service,
-    },
-  }));
+  const now = new Date();
+
+  const initialQuotes = quotes.map((quote) => {
+    const isExpired =
+      quote.status === "SENT" &&
+      quote.expiresAt &&
+      quote.expiresAt <= now;
+
+    return {
+      id: quote.id,
+      quoteNumber: quote.quoteNumber,
+      amount: quote.amount.toString(),
+      currency: quote.currency,
+      status: isExpired ? ("EXPIRED" as const) : quote.status,
+      breakdown: quote.breakdown,
+      terms: quote.terms,
+      createdAt: quote.createdAt.toISOString(),
+      sentAt: quote.sentAt?.toISOString() ?? null,
+      expiresAt: quote.expiresAt?.toISOString() ?? null,
+      respondedAt: quote.respondedAt?.toISOString() ?? null,
+      responseNote: quote.responseNote,
+      booking: {
+        bookingNumber: quote.booking.bookingNumber,
+        status: quote.booking.status,
+        preferredDate: quote.booking.preferredDate.toISOString(),
+        preferredTime: quote.booking.preferredTime,
+        service: quote.booking.service,
+      },
+    };
+  });
 
   return (
     <main className="mx-auto w-full max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
