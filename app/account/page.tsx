@@ -100,6 +100,21 @@ export default async function AccountPage() {
   My bookings
 </Link>
 
+<Link
+  href="/account/quotes"
+  className="group block rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:border-blue-300 hover:shadow-md"
+>
+  <h2 className="font-bold text-slate-900 group-hover:text-blue-700">
+    My quotations
+  </h2>
+  <p className="mt-2 text-sm leading-6 text-slate-600">
+    Review service prices, check quotation terms, and respond to quotes.
+  </p>
+  <span className="mt-3 inline-block text-sm font-semibold text-blue-700">
+    View quotations →
+  </span>
+</Link>
+
 
         </section>
 
