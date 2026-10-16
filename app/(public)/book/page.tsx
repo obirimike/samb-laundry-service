@@ -2,7 +2,25 @@ import { redirect } from "next/navigation";
 import { ClipboardList } from "lucide-react";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
-import BookingForm from "@/components/booking/BookingForm";
+import dynamic from "next/dynamic";
+import Skeleton from "@/components/ui/Skeleton";
+
+const BookingForm = dynamic(
+  () => import("@/components/booking/BookingForm"),
+  {
+    loading: () => (
+      <div className="space-y-6">
+        <Skeleton className="h-20 w-full rounded-2xl" />
+        <div className="grid gap-5 sm:grid-cols-2">
+          <Skeleton className="h-12 w-full rounded-xl" />
+          <Skeleton className="h-12 w-full rounded-xl" />
+        </div>
+        <Skeleton className="h-28 w-full rounded-xl" />
+        <Skeleton className="h-12 w-48 rounded-xl bg-blue-900/30" />
+      </div>
+    ),
+  }
+);
 
 type BookingPageProps = {
   searchParams: Promise<{ service?: string }>;
