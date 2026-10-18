@@ -476,6 +476,7 @@ export default function QuoteManagement({
                     <th className="px-5 py-3 font-semibold">Amount</th>
                     <th className="px-5 py-3 font-semibold">Status</th>
                     <th className="px-5 py-3 font-semibold">Created</th>
+                    <th className="px-5 py-3 font-semibold">Actions</th>
                   </tr>
                 </thead>
 
@@ -536,6 +537,27 @@ export default function QuoteManagement({
                       <td className="whitespace-nowrap px-5 py-4 text-slate-600">
                         {formatDate(quote.createdAt)}
                       </td>
+
+                      <td className="px-5 py-4">
+  {(quote.status === "DRAFT" || quote.status === "SENT") && (
+    <button
+      type="button"
+      onClick={() => handleSendQuote(quote.id)}
+      disabled={sendingQuoteId !== null}
+      className="whitespace-nowrap rounded-lg bg-blue-700 px-3 py-2 text-xs font-semibold text-white transition hover:bg-blue-800 disabled:cursor-not-allowed disabled:opacity-60"
+    >
+      {sendingQuoteId === quote.id
+        ? "Sending..."
+        : quote.status === "DRAFT"
+          ? "Send quote"
+          : "Resend email"}
+    </button>
+  )}
+
+  {quote.status !== "DRAFT" && quote.status !== "SENT" && (
+    <span className="text-xs text-slate-400">No action</span>
+  )}
+</td>
                     </tr>
                   ))}
                 </tbody>

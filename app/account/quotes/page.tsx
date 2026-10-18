@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { expireSentQuotes } from "@/lib/quotes";
 import nextDynamic from "next/dynamic";
 import Skeleton from "@/components/ui/Skeleton";
 
@@ -35,6 +36,8 @@ export default async function AccountQuotesPage() {
   if (session.user.role !== "CUSTOMER") {
     redirect("/admin/quotes");
   }
+
+  await expireSentQuotes();
 
   const quotes = await db.quote.findMany({
     where: {

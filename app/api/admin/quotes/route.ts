@@ -4,6 +4,7 @@ import { z } from "zod";
 
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { expireSentQuotes } from "@/lib/quotes";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -98,6 +99,8 @@ export async function GET() {
         { status: 403 }
       );
     }
+
+    await expireSentQuotes();
 
     const quotes = await db.quote.findMany({
       orderBy: { createdAt: "desc" },
