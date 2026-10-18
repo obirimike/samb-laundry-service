@@ -171,7 +171,15 @@ model Quote {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  revision        Int     @default(1)
+  previousQuoteId String?
+
+  previousQuote Quote?  @relation("QuoteRevisions", fields: [previousQuoteId], references: [id], onDelete: SetNull)
+  revisions     Quote[] @relation("QuoteRevisions")
+
+  @@unique([previousQuoteId])
   @@index([bookingId, createdAt])
   @@index([createdById])
   @@index([status, expiresAt])
+  @@index([bookingId, revision])
 }
