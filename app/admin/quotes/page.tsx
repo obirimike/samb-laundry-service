@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import nextDynamic from "next/dynamic";
 import Skeleton from "@/components/ui/Skeleton";
+import { expireSentQuotes } from "@/lib/quotes";
 
 const QuoteManagement = nextDynamic(
   () => import("@/components/admin/QuoteManagement"),
@@ -36,6 +37,8 @@ export default async function AdminQuotesPage() {
   if (session.user.role !== "ADMIN") {
     redirect("/account");
   }
+
+  await expireSentQuotes();
 
   const [quotes, bookings] = await Promise.all([
     db.quote.findMany({
