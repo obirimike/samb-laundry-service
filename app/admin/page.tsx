@@ -3,13 +3,11 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import {
   ArrowRight,
-  BriefcaseBusiness,
   CalendarClock,
   CheckCircle2,
   ClipboardList,
   Clock3,
   Users,
-  Calendar,
 } from "lucide-react";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
@@ -127,75 +125,23 @@ export default async function AdminDashboardPage() {
 
       <main className="min-h-screen bg-slate-50 px-4 py-10 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl">
-          <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
-            <div>
-              <p className="text-sm font-bold uppercase tracking-wider text-blue-700">
-                SAMB&apos;s management
-              </p>
-              <h1 className="mt-2 text-3xl font-extrabold text-slate-900 sm:text-4xl">
-                Admin dashboard
-              </h1>
-              <p className="mt-3 text-slate-600">
-                Welcome, {session.user.name || "Administrator"}. Here&apos;s
-                the current booking overview.
-              </p>
-            </div>
+          <header>
+            <p className="text-sm font-bold uppercase tracking-wider text-blue-700">
+              SAMB&apos;s management
+            </p>
+            <h1 className="mt-2 text-3xl font-extrabold text-slate-900 sm:text-4xl">
+              Admin dashboard
+            </h1>
+            <p className="mt-3 text-slate-600">
+              Welcome, {session.user.name || "Administrator"}. Here&apos;s the
+              current booking overview.
+            </p>
+          </header>
 
-            <Link
-              href="/admin/bookings"
-              className="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-700 px-5 py-3 font-semibold text-white hover:bg-blue-800"
-            >
-            <ClipboardList size={17} />  Manage bookings
-            </Link>
-
-            <Link
-              href="/admin/calendar"
-              className="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-700 px-5 py-3 font-semibold text-white hover:bg-blue-800"
-            >
-            <Calendar size={17} /> Booking Calendar
-            </Link>
-
-            <Link
-              href="/admin/customers"
-              className="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-700 px-5 py-3 font-semibold text-white hover:bg-blue-800"
-            >
-            <Users size={17} /> Manage customers
-          
-            </Link>
-
-            
-            <Link
-              href="/admin/services"
-              className="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-700 px-5 py-3 font-semibold text-white hover:bg-blue-800"
-            >
-            <BriefcaseBusiness size={17} /> Manage services
-            </Link>
-
-            <Link
-              href="/admin/quotes"
-              className="group flex flex-col justify-between gap-3 rounded-2xl border border-slate-200 bg-white p-5 hover:border-blue-300 hover:shadow-md"
-            >
-              <div className="flex items-center justify-between">
-    <div>
-      <h2 className="text-lg font-bold text-slate-900">
-        Quotes &amp; Pricing
-      </h2>
-      <p className="mt-2 text-sm leading-6 text-slate-600">
-        Create service quotations, itemize costs, and review quote statuses.
-      </p>
-    </div>
-
-    <span className="ml-4 text-xl text-blue-700 transition group-hover:translate-x-1">
-      →
-    </span>
-  </div>
-
-            </Link>
-
-
-          </div>
-
-          <section className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+          <section
+            aria-label="Booking overview"
+            className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5"
+          >
             {stats.map((stat) => {
               const Icon = stat.icon;
 
