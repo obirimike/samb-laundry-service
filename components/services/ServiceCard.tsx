@@ -131,16 +131,16 @@ export default function ServiceCard({
         <div className="mt-6 flex items-center gap-2 pt-2">
           <Link
             href={`/services/${service.slug}`}
-            className="flex-1 rounded-xl border border-slate-200 bg-white py-2.5 text-center text-xs font-bold text-slate-700 transition hover:bg-slate-50 hover:text-slate-900"
+            className="flex min-h-11 flex-1 touch-manipulation items-center justify-center rounded-xl border border-slate-200 bg-white px-2 py-2.5 text-center text-sm font-bold text-slate-700 transition hover:bg-slate-50 hover:text-slate-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700"
           >
             Details
           </Link>
 
           <Link
             href={`/book?service=${service.id}`}
-            className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl bg-[#031c43] py-2.5 text-center text-xs font-bold text-white shadow-sm transition hover:bg-blue-900"
+            className="inline-flex min-h-11 flex-1 touch-manipulation items-center justify-center gap-1.5 rounded-xl bg-[#031c43] px-2 py-2.5 text-center text-sm font-bold text-white shadow-sm transition hover:bg-blue-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700"
           >
-            <CalendarCheck size={14} />
+            <CalendarCheck size={16} aria-hidden="true" />
             Book
           </Link>
         </div>
