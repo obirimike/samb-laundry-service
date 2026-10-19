@@ -4,13 +4,10 @@
 import Link from "next/link";
 import Image from "next/image";
 import { FormEvent, useState } from "react";
-import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { Eye, EyeOff } from "lucide-react";
 
 export default function RegisterPage() {
-  const router = useRouter();
-
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -63,13 +60,14 @@ export default function RegisterPage() {
         redirect: false,
       });
 
-      if (loginResult?.error) {
-        router.push("/login?registered=true");
+      if (!loginResult?.ok || loginResult.error) {
+        window.location.assign(
+          new URL("/login?registered=true", window.location.href).href
+        );
         return;
       }
 
-      router.push("/account");
-      router.refresh();
+      window.location.assign(new URL("/account", window.location.href).href);
     } catch {
       setError("A network error occurred. Please try again.");
     } finally {
@@ -183,6 +181,8 @@ export default function RegisterPage() {
                 name="password"
                 type={showPassword ? "text" : "password"}
                 autoComplete="new-password"
+                autoCapitalize="none"
+                spellCheck={false}
                 required
                 minLength={8}
                 maxLength={72}
@@ -194,8 +194,9 @@ export default function RegisterPage() {
               <button
                 type="button"
                 onClick={() => setShowPassword((prev) => !prev)}
-                className="absolute inset-y-0 right-0 flex items-center pr-3.5 text-slate-400 hover:text-slate-600 focus:outline-none"
+                className="absolute inset-y-0 right-0 z-10 flex h-full w-12 touch-manipulation items-center justify-center rounded-r-xl text-slate-500 hover:text-slate-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-600"
                 aria-label={showPassword ? "Hide password" : "Show password"}
+                aria-pressed={showPassword}
               >
                 {showPassword ? <EyeOff size={19} /> : <Eye size={19} />}
               </button>
@@ -212,6 +213,8 @@ export default function RegisterPage() {
                 name="confirmPassword"
                 type={showConfirmPassword ? "text" : "password"}
                 autoComplete="new-password"
+                autoCapitalize="none"
+                spellCheck={false}
                 required
                 value={confirmPassword}
                 onChange={(event) => setConfirmPassword(event.target.value)}
@@ -221,8 +224,9 @@ export default function RegisterPage() {
               <button
                 type="button"
                 onClick={() => setShowConfirmPassword((prev) => !prev)}
-                className="absolute inset-y-0 right-0 flex items-center pr-3.5 text-slate-400 hover:text-slate-600 focus:outline-none"
+                className="absolute inset-y-0 right-0 z-10 flex h-full w-12 touch-manipulation items-center justify-center rounded-r-xl text-slate-500 hover:text-slate-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-600"
                 aria-label={showConfirmPassword ? "Hide password" : "Show password"}
+                aria-pressed={showConfirmPassword}
               >
                 {showConfirmPassword ? <EyeOff size={19} /> : <Eye size={19} />}
               </button>

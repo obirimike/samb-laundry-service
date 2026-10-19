@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { FormEvent, useState } from "react";
 import { signIn } from "next-auth/react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 import { Eye, EyeOff } from "lucide-react";
 
@@ -45,7 +45,6 @@ function getSafeCallbackUrl(callbackUrl: string | null): string {
 }
 
 function LoginForm() {
-  const router = useRouter();
   const searchParams = useSearchParams();
 
   const [email, setEmail] = useState("");
@@ -66,7 +65,7 @@ function LoginForm() {
         redirect: false,
       });
 
-      if (!result || result.error) {
+      if (!result?.ok || result.error) {
         setError("Invalid email address or password.");
         return;
       }
@@ -75,8 +74,7 @@ function LoginForm() {
         searchParams.get("callbackUrl")
       );
 
-      router.replace(callbackUrl);
-      router.refresh();
+      window.location.assign(callbackUrl);
     } catch {
       setError("Unable to sign in right now. Please try again.");
     } finally {
@@ -172,6 +170,8 @@ function LoginForm() {
                 name="password"
                 type={showPassword ? "text" : "password"}
                 autoComplete="current-password"
+                autoCapitalize="none"
+                spellCheck={false}
                 required
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
@@ -182,8 +182,9 @@ function LoginForm() {
               <button
                 type="button"
                 onClick={() => setShowPassword((prev) => !prev)}
-                className="absolute inset-y-0 right-0 flex items-center pr-3.5 text-slate-400 hover:text-slate-600 focus:outline-none"
+                className="absolute inset-y-0 right-0 z-10 flex h-12 w-12 touch-manipulation items-center justify-center rounded-r-xl text-slate-500 hover:text-slate-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-inset focus-visible:outline-indigo-600"
                 aria-label={showPassword ? "Hide password" : "Show password"}
+                aria-pressed={showPassword}
               >
                 {showPassword ? (
                   <EyeOff size={19} />
