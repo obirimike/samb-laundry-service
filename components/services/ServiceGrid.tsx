@@ -37,7 +37,8 @@ export default function ServiceGrid({
           <button
             type="button"
             onClick={() => setActiveFilter("ALL")}
-            className={`inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition ${
+            aria-pressed={activeFilter === "ALL"}
+            className={`inline-flex min-h-11 touch-manipulation items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition ${
               activeFilter === "ALL"
                 ? "bg-slate-900 text-white shadow-sm"
                 : "bg-white text-slate-600 hover:bg-slate-100 hover:text-slate-900 border border-slate-200"
@@ -53,7 +54,8 @@ export default function ServiceGrid({
           <button
             type="button"
             onClick={() => setActiveFilter("CLEANING")}
-            className={`inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition ${
+            aria-pressed={activeFilter === "CLEANING"}
+            className={`inline-flex min-h-11 touch-manipulation items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition ${
               activeFilter === "CLEANING"
                 ? "bg-[#031c43] text-white shadow-sm"
                 : "bg-white text-slate-600 hover:bg-slate-100 hover:text-slate-900 border border-slate-200"
@@ -69,7 +71,8 @@ export default function ServiceGrid({
           <button
             type="button"
             onClick={() => setActiveFilter("LAUNDRY")}
-            className={`inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition ${
+            aria-pressed={activeFilter === "LAUNDRY"}
+            className={`inline-flex min-h-11 touch-manipulation items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition ${
               activeFilter === "LAUNDRY"
                 ? "bg-[#031c43] text-white shadow-sm"
                 : "bg-white text-slate-600 hover:bg-slate-100 hover:text-slate-900 border border-slate-200"
@@ -85,7 +88,8 @@ export default function ServiceGrid({
           <button
             type="button"
             onClick={() => setActiveFilter("DOMESTIC_SUPPORT")}
-            className={`inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition ${
+            aria-pressed={activeFilter === "DOMESTIC_SUPPORT"}
+            className={`inline-flex min-h-11 touch-manipulation items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition ${
               activeFilter === "DOMESTIC_SUPPORT"
                 ? "bg-[#031c43] text-white shadow-sm"
                 : "bg-white text-slate-600 hover:bg-slate-100 hover:text-slate-900 border border-slate-200"
@@ -101,7 +105,8 @@ export default function ServiceGrid({
           <button
             type="button"
             onClick={() => setActiveFilter("PEST_CONTROL")}
-            className={`inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition ${
+            aria-pressed={activeFilter === "PEST_CONTROL"}
+            className={`inline-flex min-h-11 touch-manipulation items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition ${
               activeFilter === "PEST_CONTROL"
                 ? "bg-[#031c43] text-white shadow-sm"
                 : "bg-white text-slate-600 hover:bg-slate-100 hover:text-slate-900 border border-slate-200"
