@@ -17,3 +17,45 @@ test("public pages render their primary content", async ({ page }) => {
   await expect(page.getByRole("heading", { name: "Create your account" })).toBeVisible();
   await expect(page.getByLabel("Full name")).toBeVisible();
 });
+
+test("password visibility control works on a mobile viewport", async ({
+  browser,
+}) => {
+  const context = await browser.newContext({
+    viewport: { width: 390, height: 844 },
+    isMobile: true,
+    hasTouch: true,
+  });
+  const page = await context.newPage();
+  await page.goto("/login");
+
+  const password = page.locator("#password");
+  const showPassword = page.getByRole("button", { name: "Show password" });
+  await showPassword.tap();
+  await expect(showPassword).toHaveAttribute("aria-pressed", "true");
+  await expect(password).toHaveAttribute("type", "text");
+  await page.getByRole("button", { name: "Hide password" }).tap();
+  await expect(password).toHaveAttribute("type", "password");
+  await expect
+    .poll(() =>
+      page.evaluate(
+        () => document.documentElement.scrollWidth <= window.innerWidth
+      )
+    )
+    .toBe(true);
+  await context.close();
+});
+
+test("service detail links open the selected service", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/services");
+
+  const detailsLink = page.getByRole("link", { name: "Details" }).first();
+  await expect(detailsLink).toBeVisible();
+  await detailsLink.click();
+
+  await expect(page).toHaveURL(/\/services\/[^/]+$/);
+  await expect(
+    page.getByRole("heading", { name: "About this service" })
+  ).toBeVisible();
+});
