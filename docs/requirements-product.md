@@ -2,12 +2,12 @@
 
 ## Scope
 
-This document describes the service-quote workflow, with emphasis on the administrator endpoint `POST /api/admin/quotes/{id}/send` implemented in `app/api/admin/quotes/[id]/send/route.ts`. It is a feature-level reference, not a complete specification of every SAMB platform workflow.
+This document describes the service-quote workflow, including administrator quote creation, revision and sending. It is a feature-level reference, not a complete specification of every SAMB platform workflow.
 
 ## Users and outcomes
 
-- **Administrator:** prepares a quote for a non-cancelled booking and sends it to the booking customer. The administrator can resend a quote while it remains in `SENT` status.
-- **Customer:** receives the quote by email and can review the quote from the customer account. Sending a quote does not confirm the booking or record payment.
+- **Administrator:** prepares quotes for non-cancelled bookings, revises eligible quotes, and sends them to booking customers. The administrator can resend a quote while it remains in `SENT` status.
+- **Customer:** receives quotes by email and can review each revision from the customer account. Sending a quote does not confirm the booking or record payment.
 
 ## Functional requirements
 
@@ -19,6 +19,19 @@ This document describes the service-quote workflow, with emphasis on the adminis
 6. Quote email content includes the quote and booking numbers, service, amount and currency, itemized breakdown, terms, expiry when present, and a link to `/account/quotes`.
 7. The caller must be told whether the email provider accepted the email. A failed provider send does not roll back the first-send status or notification; the endpoint returns a successful HTTP response with `emailSent: false` and an explanatory message. An administrator can retry while the quote remains `SENT`.
 8. A quote send does not accept a request body and does not itself cause a customer response, booking confirmation, or payment.
+9. An administrator may revise a `DRAFT`, `SENT`, or `EXPIRED` quote for a non-cancelled booking. A revision is a new `DRAFT` quote linked to its predecessor, increments the revision number, and preserves the predecessor and its response history.
+10. Revising a `SENT` quote changes the predecessor to `WITHDRAWN` and notifies the customer so the outdated quote cannot be accepted. Accepted, declined, withdrawn, or already superseded quotes cannot be revised.
+11. Customers can see revision numbers and historical quote states. Only a quote currently in `SENT` status can be accepted or declined.
+
+## Quote revision API
+
+```http
+POST /api/admin/quotes/{id}/revise
+```
+
+The request requires an authenticated administrator and a JSON body containing one to 50 itemized lines, with optional terms and expiry. The server validates the input and recalculates the quote total. A successful request returns HTTP `201` with the linked draft revision. Invalid details return `400`; a missing source returns `404`; unsupported source states, cancelled bookings, duplicate revisions, and concurrent changes return `409`.
+
+Revisions retain the same booking and currency as their predecessor. Only the latest revision can be revised; the unique predecessor relationship prevents concurrent or duplicate successors.
 
 ## API contract
 
@@ -63,6 +76,9 @@ The email provider reporting failure is not an HTTP error in this endpoint: it r
 DRAFT -- first send --> SENT -- expiry processing --> EXPIRED
                          |
                          +-- administrator resend --> SENT
+     DRAFT or SENT -- administrator revision --> WITHDRAWN (if SENT)
+                                             \--> new linked DRAFT revision
+     EXPIRED -- administrator revision --> new linked DRAFT revision
 ```
 
 Other quote states (`ACCEPTED`, `DECLINED`, `WITHDRAWN`, and `EXPIRED`) cannot be sent with this endpoint. Quote expiry is also processed when quote lists and quote pages are loaded.
@@ -75,3 +91,5 @@ Other quote states (`ACCEPTED`, `DECLINED`, `WITHDRAWN`, and `EXPIRED`) cannot b
 - An expired quote is marked expired and is not emailed.
 - A provider failure is visible to the administrator and reports `emailSent: false`; it does not present the email as delivered.
 - Unsupported states and concurrent state changes produce an explicit conflict response.
+- Administrators can edit item descriptions, quantities, prices, terms, and expiry while revising an eligible quote.
+- A sent predecessor is withdrawn and customers cannot respond to it; its linked revision is visible with its revision number.
