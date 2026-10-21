@@ -475,7 +475,7 @@ export default function QuoteManagement({
           <p className="text-sm font-semibold uppercase tracking-[0.15em] text-blue-700">
             Admin workspace
           </p>
-          <h1 className="mt-2 text-3xl font-bold tracking-tight text-slate-100 ">
+          <h1 className="mt-2 text-3xl font-bold tracking-tight text-slate-900 ">
             Quotes &amp; Pricing
           </h1>
           <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-400">
