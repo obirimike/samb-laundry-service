@@ -24,11 +24,12 @@ Exact package versions and scripts are maintained in `package.json` and the lock
 
 The application is served locally at `http://localhost:3000`. `npm run db:migrate` uses Prisma's deploy migration flow; use the repository's established development migration workflow when authoring a new schema migration, and never use a development migration command against production.
 
-## Quote-send code map
+## Quote workflow code map
 
 | Concern | Location |
 | --- | --- |
 | Dedicated send endpoint | `app/api/admin/quotes/[id]/send/route.ts` |
+| Quote revision endpoint | `app/api/admin/quotes/[id]/revise/route.ts` |
 | Quote creation and list API | `app/api/admin/quotes/route.ts` |
 | Quote management UI | `components/admin/QuoteManagement.tsx` |
 | Quote email rendering and Resend call | `lib/emails.ts` |
