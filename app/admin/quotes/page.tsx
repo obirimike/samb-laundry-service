@@ -105,6 +105,8 @@ export default async function AdminQuotesPage() {
   const initialQuotes = quotes.map((quote) => ({
     id: quote.id,
     quoteNumber: quote.quoteNumber,
+    revision: quote.revision,
+    previousQuoteId: quote.previousQuoteId,
     amount: quote.amount.toString(),
     currency: quote.currency,
     status: quote.status,

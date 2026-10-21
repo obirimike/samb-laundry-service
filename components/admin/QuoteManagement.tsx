@@ -29,6 +29,8 @@ type BookingOption = {
 type QuoteRecord = {
   id: string;
   quoteNumber: string;
+  revision: number;
+  previousQuoteId: string | null;
   amount: string | number;
   currency: string;
   status: QuoteStatus;
@@ -123,6 +125,7 @@ export default function QuoteManagement({
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");
   const [selectedBooking, setSelectedBooking] = useState("");
+  const [revisionSourceId, setRevisionSourceId] = useState<string | null>(null);
   const [terms, setTerms] = useState(
     "50% upfront and 50% on completion."
   );
@@ -217,6 +220,85 @@ export default function QuoteManagement({
     });
   }, [quotes, search, statusFilter]);
 
+  const quoteIdsWithRevisions = useMemo(
+    () =>
+      new Set(
+        quotes
+          .map((quote) => quote.previousQuoteId)
+          .filter((id): id is string => Boolean(id))
+      ),
+    [quotes]
+  );
+
+  function startRevision(quote: QuoteRecord) {
+    const rawItems = Array.isArray(quote.breakdown)
+      ? quote.breakdown.filter(
+          (item): item is Record<string, unknown> =>
+            typeof item === "object" &&
+            item !== null &&
+            !Array.isArray(item)
+        )
+      : [];
+
+    const baseRowId = nextRowId;
+
+    const preparedItems: FormLineItem[] = rawItems.map((item, index) => ({
+      rowId: baseRowId + index,
+      description:
+        typeof item.description === "string" ? item.description : "",
+      quantity: String(item.quantity ?? "1"),
+      unitPrice: String(item.unitPrice ?? ""),
+    }));
+
+    if (preparedItems.length === 0) {
+      preparedItems.push({
+        rowId: baseRowId,
+        description: "",
+        quantity: "1",
+        unitPrice: "",
+      });
+    }
+
+    setItems(preparedItems);
+    setNextRowId(baseRowId + preparedItems.length);
+    setRevisionSourceId(quote.id);
+    setSelectedBooking(quote.booking.id);
+    setTerms(quote.terms ?? "");
+
+    const expiryDate = quote.expiresAt?.slice(0, 10) ?? "";
+    const expiryIsFuture =
+      expiryDate !== "" &&
+      new Date(`${expiryDate}T23:59:59.000Z`).getTime() > Date.now();
+
+    setExpiresAt(expiryIsFuture ? expiryDate : "");
+    setError("");
+    setSuccess(
+      `Preparing revision ${quote.revision + 1} of ${quote.quoteNumber}.`
+    );
+
+    document
+      .getElementById("quote-creation-form")
+      ?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function cancelRevision() {
+    setRevisionSourceId(null);
+    setSelectedBooking("");
+    setTerms("50% upfront and 50% on completion.");
+    setExpiresAt("");
+    setItems([
+      {
+        rowId: nextRowId,
+        description: "",
+        quantity: "1",
+        unitPrice: "",
+      },
+    ]);
+    setNextRowId((current) => current + 1);
+    setError("");
+    setSuccess("");
+  }
+
   const estimatedTotal = items.reduce((total, item) => {
     const quantity = Number(item.quantity);
     const unitPrice = Number(item.unitPrice);
@@ -268,7 +350,7 @@ export default function QuoteManagement({
     setError("");
     setSuccess("");
 
-    if (!selectedBooking) {
+    if (!revisionSourceId && !selectedBooking) {
       setError("Please select a booking.");
       return;
     }
@@ -319,21 +401,27 @@ export default function QuoteManagement({
     setIsSubmitting(true);
 
     try {
-      const response = await fetch("/api/admin/quotes", {
+      const endpoint = revisionSourceId
+        ? `/api/admin/quotes/${revisionSourceId}/revise`
+        : "/api/admin/quotes";
+
+      const payload = {
+        ...(revisionSourceId ? {} : { bookingId: selectedBooking }),
+        items: items.map((item) => ({
+          description: item.description.trim(),
+          quantity: Number(item.quantity),
+          unitPrice: Number(item.unitPrice),
+        })),
+        terms: terms.trim() || undefined,
+        expiresAt: expiryIso,
+      };
+
+      const response = await fetch(endpoint, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          bookingId: selectedBooking,
-          items: items.map((item) => ({
-            description: item.description.trim(),
-            quantity: Number(item.quantity),
-            unitPrice: Number(item.unitPrice),
-          })),
-          terms: terms.trim() || undefined,
-          expiresAt: expiryIso,
-        }),
+        body: JSON.stringify(payload),
       });
 
       const result = (await response.json()) as {
@@ -347,6 +435,7 @@ export default function QuoteManagement({
       }
 
       setSuccess(result.message || "Draft quote created successfully.");
+      setRevisionSourceId(null);
       setSelectedBooking("");
       setTerms("50% upfront and 50% on completion.");
       setExpiresAt("");
@@ -488,6 +577,9 @@ export default function QuoteManagement({
                           {quote.quoteNumber}
                         </p>
                         <p className="mt-1 text-xs text-slate-500">
+                          Revision {quote.revision}
+                        </p>
+                        <p className="mt-1 text-xs text-slate-500">
                           {quote.booking.bookingNumber}
                         </p>
                         <p className="mt-1 text-xs text-slate-500">
@@ -516,17 +608,6 @@ export default function QuoteManagement({
                         >
                           {statusLabel(quote.status)}
                         </span>
-                        {quote.status === "DRAFT" && (
-  <button
-    type="button"
-    disabled={sendingQuoteId === quote.id}
-    onClick={() => handleSendQuote(quote.id)}
-    className="mt-2 block whitespace-nowrap rounded-lg bg-blue-700 px-3 py-2 text-xs font-semibold text-white hover:bg-blue-800 disabled:cursor-not-allowed disabled:opacity-60"
-  >
-    {sendingQuoteId === quote.id ? "Sending..." : "Send quote"}
-  </button>
-)}
-
                         {quote.expiresAt && (
                           <p className="mt-2 whitespace-nowrap text-xs text-slate-500">
                             Expires {formatDate(quote.expiresAt)}
@@ -539,25 +620,43 @@ export default function QuoteManagement({
                       </td>
 
                       <td className="px-5 py-4">
-  {(quote.status === "DRAFT" || quote.status === "SENT") && (
-    <button
-      type="button"
-      onClick={() => handleSendQuote(quote.id)}
-      disabled={sendingQuoteId !== null}
-      className="whitespace-nowrap rounded-lg bg-blue-700 px-3 py-2 text-xs font-semibold text-white transition hover:bg-blue-800 disabled:cursor-not-allowed disabled:opacity-60"
-    >
-      {sendingQuoteId === quote.id
-        ? "Sending..."
-        : quote.status === "DRAFT"
-          ? "Send quote"
-          : "Resend email"}
-    </button>
-  )}
+                        <div className="flex flex-wrap gap-2">
+                          {(quote.status === "DRAFT" ||
+                            quote.status === "SENT") && (
+                            <button
+                              type="button"
+                              onClick={() => handleSendQuote(quote.id)}
+                              disabled={
+                                sendingQuoteId !== null || isSubmitting
+                              }
+                              className="whitespace-nowrap rounded-lg bg-blue-700 px-3 py-2 text-xs font-semibold text-white hover:bg-blue-800 disabled:opacity-50"
+                            >
+                              {sendingQuoteId === quote.id
+                                ? "Sending..."
+                                : quote.status === "DRAFT"
+                                  ? "Send quote"
+                                  : "Resend email"}
+                            </button>
+                          )}
 
-  {quote.status !== "DRAFT" && quote.status !== "SENT" && (
-    <span className="text-xs text-slate-400">No action</span>
-  )}
-</td>
+                          {(quote.status === "DRAFT" ||
+                            quote.status === "SENT" ||
+                            quote.status === "EXPIRED") &&
+                            quote.booking.status !== "CANCELLED" &&
+                            !quoteIdsWithRevisions.has(quote.id) && (
+                              <button
+                                type="button"
+                                onClick={() => startRevision(quote)}
+                                disabled={
+                                  isSubmitting || sendingQuoteId !== null
+                                }
+                                className="whitespace-nowrap rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-50"
+                              >
+                                Revise
+                              </button>
+                            )}
+                        </div>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -576,7 +675,12 @@ export default function QuoteManagement({
               Create a quotation
             </p>
             <h2 className="mt-1 text-xl font-bold text-slate-900">
-              New draft quote
+              {revisionSourceId
+                ? `Revise ${
+                    quotes.find((quote) => quote.id === revisionSourceId)
+                      ?.quoteNumber ?? "quote"
+                  }`
+                : "New draft quote"}
             </h2>
             <p className="mt-2 text-sm leading-6 text-slate-500">
               Select a booking, enter each cost item, and save the draft for
@@ -584,7 +688,11 @@ export default function QuoteManagement({
             </p>
           </div>
 
-          <form onSubmit={handleCreateQuote} className="space-y-5 p-5 sm:p-6">
+          <form
+            id="quote-creation-form"
+            onSubmit={handleCreateQuote}
+            className="space-y-5 p-5 sm:p-6"
+          >
             {error && (
               <div
                 role="alert"
@@ -614,9 +722,10 @@ export default function QuoteManagement({
               <select
                 id="bookingId"
                 required
+                disabled={Boolean(revisionSourceId)}
                 value={selectedBooking}
                 onChange={(event) => setSelectedBooking(event.target.value)}
-                className="w-full rounded-xl border border-slate-300 bg-white px-3 py-3 text-sm text-slate-700 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                className="w-full rounded-xl border border-slate-300 bg-white px-3 py-3 text-sm text-slate-700 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 disabled:bg-slate-100"
               >
                 <option value="">Select a booking</option>
                 {bookings.map((booking) => (
@@ -802,13 +911,30 @@ export default function QuoteManagement({
               />
             </div>
 
-            <button
-              type="submit"
-              disabled={isSubmitting || bookings.length === 0}
-              className="w-full rounded-xl bg-blue-700 px-4 py-3 font-semibold text-white transition hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              {isSubmitting ? "Creating draft..." : "Create draft quote"}
-            </button>
+            <div className="flex flex-col gap-3">
+              <button
+                type="submit"
+                disabled={isSubmitting || bookings.length === 0}
+                className="w-full rounded-xl bg-blue-700 px-4 py-3 font-semibold text-white transition hover:bg-blue-800 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {isSubmitting
+                  ? "Saving..."
+                  : revisionSourceId
+                    ? "Save revised draft"
+                    : "Create draft quote"}
+              </button>
+
+              {revisionSourceId && (
+                <button
+                  type="button"
+                  onClick={cancelRevision}
+                  disabled={isSubmitting}
+                  className="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-50"
+                >
+                  Cancel revision
+                </button>
+              )}
+            </div>
 
             <p className="text-xs leading-5 text-slate-500">
               Creating this draft does not send an email, confirm the booking,

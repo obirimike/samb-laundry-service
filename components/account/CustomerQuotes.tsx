@@ -20,6 +20,8 @@ type QuoteLine = {
 type QuoteRecord = {
   id: string;
   quoteNumber: string;
+  revision: number;
+  previousQuoteId: string | null;
   amount: string;
   currency: string;
   status: QuoteStatus;
@@ -252,12 +254,15 @@ export default function CustomerQuotes({ initialQuotes }: Props) {
               >
                 <div className="flex flex-col gap-4 border-b border-slate-200 p-5 sm:flex-row sm:items-start sm:justify-between sm:p-6">
                   <div>
-                    <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                    <h2 className="text-lg font-bold text-slate-900">
                       {quote.quoteNumber}
-                    </p>
-                    <h2 className="mt-1 text-xl font-bold text-slate-900">
-                      {quote.booking.service.name}
+                      <span className="ml-2 text-sm font-medium text-slate-500">
+                        Revision {quote.revision}
+                      </span>
                     </h2>
+                    <h3 className="mt-1 text-xl font-bold text-slate-900">
+                      {quote.booking.service.name}
+                    </h3>
                     <p className="mt-1 text-sm text-slate-500">
                       Booking {quote.booking.bookingNumber}
                     </p>
