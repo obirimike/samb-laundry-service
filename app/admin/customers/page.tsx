@@ -92,7 +92,7 @@ export default async function AdminCustomersPage({
                 name="q"
                 defaultValue={query}
                 placeholder="Search name, email, or phone"
-                className="w-full rounded-xl border border-slate-200 bg-white py-3 pl-11 pr-4 text-black outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
+                className="w-full rounded-xl border border-slate-200 bg-white py-3 pl-11 pr-4 text-slate-900 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
               />
             </label>
             <button
