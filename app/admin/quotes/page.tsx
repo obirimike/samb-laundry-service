@@ -112,6 +112,7 @@ export default async function AdminQuotesPage() {
     status: quote.status,
     terms: quote.terms,
     breakdown: quote.breakdown,
+    responseNote: quote.responseNote,
     createdAt: quote.createdAt.toISOString(),
     expiresAt: quote.expiresAt?.toISOString() ?? null,
     sentAt: quote.sentAt?.toISOString() ?? null,

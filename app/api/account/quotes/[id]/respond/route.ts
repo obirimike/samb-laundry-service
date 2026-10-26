@@ -14,10 +14,10 @@ type RouteContext = {
 
 const responseSchema = z
   .object({
-    decision: z.enum(["ACCEPT", "DECLINE"]),
+    decision: z.enum(["ACCEPT", "DECLINE", "ACCEPTED", "DECLINED"]),
     responseNote: z.string().trim().max(1000).optional(),
-  })
-  .strict();
+    note: z.string().trim().max(1000).optional(),
+  });
 
 export async function POST(
   request: Request,
@@ -62,7 +62,10 @@ export async function POST(
       );
     }
 
-    const { decision, responseNote } = parsed.data;
+    const { decision } = parsed.data;
+    const responseNote = (parsed.data.responseNote ?? parsed.data.note ?? "").trim();
+    const normalizedDecision: "ACCEPT" | "DECLINE" =
+      decision.startsWith("ACCEPT") ? "ACCEPT" : "DECLINE";
 
     // Scope the lookup to this customer's own booking.
     const quote = await db.quote.findFirst({
@@ -128,7 +131,7 @@ export async function POST(
     }
 
     const newStatus =
-      decision === "ACCEPT" ? "ACCEPTED" : "DECLINED";
+      normalizedDecision === "ACCEPT" ? "ACCEPTED" : "DECLINED";
 
     const now = new Date();
 
@@ -152,7 +155,7 @@ export async function POST(
     }
 
     const actionText =
-      decision === "ACCEPT" ? "accepted" : "declined";
+      normalizedDecision === "ACCEPT" ? "accepted" : "declined";
 
     // Notification/email failures must not undo a customer's response.
     try {
@@ -180,7 +183,7 @@ export async function POST(
 
     return NextResponse.json({
       message:
-        decision === "ACCEPT"
+        normalizedDecision === "ACCEPT"
           ? "You accepted the quote successfully."
           : "You declined the quote successfully.",
       status: newStatus,
