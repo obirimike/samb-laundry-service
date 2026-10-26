@@ -26,6 +26,10 @@ export default async function AccountPage() {
     redirect("/admin");
   }
 
+  if (session.user.role === "STAFF") {
+    redirect("/staff");
+  }
+
   const [
     bookings,
     totalBookings,
