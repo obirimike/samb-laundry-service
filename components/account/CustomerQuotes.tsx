@@ -143,6 +143,13 @@ export default function CustomerQuotes({ initialQuotes }: Props) {
 
     if (!confirmed) return;
 
+    const note = (notes[quote.id] ?? "").trim();
+
+    if (note.length > 1000) {
+      setError("Your message must be 1,000 characters or fewer.");
+      return;
+    }
+
     setError("");
     setMessage("");
     setBusyQuoteId(quote.id);
@@ -157,7 +164,7 @@ export default function CustomerQuotes({ initialQuotes }: Props) {
           },
           body: JSON.stringify({
             decision,
-            responseNote: notes[quote.id]?.trim() || undefined,
+            ...(note ? { note, responseNote: note } : {}),
           }),
         }
       );
@@ -179,13 +186,21 @@ export default function CustomerQuotes({ initialQuotes }: Props) {
                 ...item,
                 status: result.status!,
                 respondedAt: new Date().toISOString(),
-                responseNote: notes[quote.id]?.trim() || null,
+                responseNote: note || null,
               }
             : item
         )
       );
 
-      setMessage(result.message || "Your response was recorded.");
+      setNotes((current) => ({
+        ...current,
+        [quote.id]: "",
+      }));
+
+      setMessage(
+        result.message ||
+          `Your response to ${quote.quoteNumber} has been recorded.`
+      );
     } catch {
       setError("A network error occurred. Please try again.");
     } finally {
@@ -376,51 +391,63 @@ export default function CustomerQuotes({ initialQuotes }: Props) {
 
                   {canRespond && (
                     <div className="border-t border-slate-200 pt-5">
-                      <label
-                        htmlFor={`note-${quote.id}`}
-                        className="mb-2 block text-sm font-semibold text-slate-800"
-                      >
-                        Message to SAMB (optional)
-                      </label>
-                      <textarea
-                        id={`note-${quote.id}`}
-                        rows={3}
-                        maxLength={1000}
-                        value={notes[quote.id] || ""}
-                        onChange={(event) =>
-                          setNotes((current) => ({
-                            ...current,
-                            [quote.id]: event.target.value,
-                          }))
-                        }
-                        placeholder="Ask a question or add a note..."
-                        className="w-full rounded-xl border border-slate-300 px-3 py-3 text-sm text-slate-800 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-                      />
+                      <div className="w-full max-w-xl space-y-3">
+                        <div>
+                          <label
+                            htmlFor={`note-${quote.id}`}
+                            className="mb-2 block text-sm font-semibold text-slate-700"
+                          >
+                            Message to SAMB{" "}
+                            <span className="font-normal text-slate-400">
+                              (optional)
+                            </span>
+                          </label>
 
-                      <div className="mt-4 flex flex-col gap-3 sm:flex-row">
-                        <button
-                          type="button"
-                          disabled={isBusy}
-                          onClick={() => respond(quote, "ACCEPT")}
-                          className="flex-1 rounded-xl bg-emerald-700 px-4 py-3 text-sm font-semibold text-white transition hover:bg-emerald-800 disabled:cursor-not-allowed disabled:opacity-60"
-                        >
-                          {isBusy ? "Submitting..." : "Accept quote"}
-                        </button>
+                          <textarea
+                            id={`note-${quote.id}`}
+                            rows={3}
+                            maxLength={1000}
+                            value={notes[quote.id] || ""}
+                            onChange={(event) =>
+                              setNotes((current) => ({
+                                ...current,
+                                [quote.id]: event.target.value,
+                              }))
+                            }
+                            placeholder="Add a question, explain your decision, or request a preferred service date..."
+                            className="w-full resize-y rounded-xl border border-slate-300 px-3 py-3 text-sm leading-6 text-slate-800 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                          />
 
-                        <button
-                          type="button"
-                          disabled={isBusy}
-                          onClick={() => respond(quote, "DECLINE")}
-                          className="flex-1 rounded-xl border border-rose-200 px-4 py-3 text-sm font-semibold text-rose-700 transition hover:bg-rose-50 disabled:cursor-not-allowed disabled:opacity-60"
-                        >
-                          {isBusy ? "Submitting..." : "Decline quote"}
-                        </button>
+                          <p className="mt-1 text-xs text-slate-500">
+                            {(notes[quote.id] ?? "").length} / 1,000 characters
+                          </p>
+                        </div>
+
+                        <div className="flex flex-col gap-2 sm:flex-row">
+                          <button
+                            type="button"
+                            disabled={isBusy}
+                            onClick={() => respond(quote, "DECLINE")}
+                            className="rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-60"
+                          >
+                            {isBusy ? "Processing..." : "Decline"}
+                          </button>
+
+                          <button
+                            type="button"
+                            disabled={isBusy}
+                            onClick={() => respond(quote, "ACCEPT")}
+                            className="rounded-xl bg-blue-700 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-800 disabled:cursor-not-allowed disabled:opacity-60"
+                          >
+                            {isBusy ? "Processing..." : "Accept quote"}
+                          </button>
+                        </div>
+
+                        <p className="text-xs leading-5 text-slate-500">
+                          Responding records your decision. It does not itself
+                          confirm the booking or record payment.
+                        </p>
                       </div>
-
-                      <p className="mt-3 text-xs leading-5 text-slate-500">
-                        Responding records your decision. It does not itself
-                        confirm the booking or record payment.
-                      </p>
                     </div>
                   )}
 
