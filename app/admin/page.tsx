@@ -166,6 +166,32 @@ export default async function AdminDashboardPage() {
             })}
           </section>
 
+          <section className="mt-8 grid gap-4 sm:grid-cols-2">
+            <Link
+              href="/admin/staff"
+              className="block rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:border-blue-300 hover:shadow-md"
+            >
+              <h2 className="text-lg font-bold text-slate-900">
+                Staff Management
+              </h2>
+              <p className="mt-2 text-sm leading-6 text-slate-600">
+                Create staff accounts and review their active assignments.
+              </p>
+            </Link>
+
+            <Link
+              href="/admin/assignments"
+              className="block rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:border-blue-300 hover:shadow-md"
+            >
+              <h2 className="text-lg font-bold text-slate-900">
+                Staff Assignments
+              </h2>
+              <p className="mt-2 text-sm leading-6 text-slate-600">
+                Assign, replace, or unassign staff from confirmed bookings and review assignment history.
+              </p>
+            </Link>
+          </section>
+
           <section className="mt-8 overflow-hidden rounded-2xl border border-slate-200 bg-white">
             <div className="flex flex-col justify-between gap-3 border-b border-slate-100 p-5 sm:flex-row sm:items-center sm:p-6">
               <div>
