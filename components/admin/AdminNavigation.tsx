@@ -8,12 +8,16 @@ import {
   CalendarDays,
   ClipboardList,
   LayoutDashboard,
+  UserCheck,
+  UserPlus,
   Users,
 } from "lucide-react";
 
 const navigationItems = [
   { href: "/admin", label: "Overview", icon: LayoutDashboard },
   { href: "/admin/bookings", label: "Bookings", icon: ClipboardList },
+  { href: "/admin/assignments", label: "Assignments", icon: UserPlus },
+  { href: "/admin/staff", label: "Staff", icon: UserCheck },
   { href: "/admin/calendar", label: "Booking calendar", icon: CalendarDays },
   { href: "/admin/customers", label: "Customers", icon: Users },
   { href: "/admin/services", label: "Services", icon: BriefcaseBusiness },

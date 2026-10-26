@@ -15,6 +15,7 @@ export default async function NavBar() {
   const user = session?.user;
   const isSignedIn = Boolean(user?.id);
   const isAdmin = user?.role === "ADMIN";
+  const isStaff = user?.role === "STAFF";
 
   const dashboardHref = isAdmin ? "/admin" : "/account";
   const dashboardLabel = isAdmin ? "Admin Dashboard" : "My Account";
@@ -66,13 +67,28 @@ export default async function NavBar() {
         </nav>
 
         <div className="hidden items-center gap-3 md:flex">
-          {isSignedIn ? (
+          {isStaff ? (
             <Link
-              href={dashboardHref}
-              className="rounded-xl px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-100"
+              href="/staff"
+              className="rounded-xl bg-[#031c43] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-800"
             >
-              {dashboardLabel}
+              Staff Dashboard
             </Link>
+          ) : isSignedIn ? (
+            <>
+              <Link
+                href={dashboardHref}
+                className="rounded-xl px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-100"
+              >
+                {dashboardLabel}
+              </Link>
+              <Link
+                href={bookingHref}
+                className="rounded-xl bg-[#031c43] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-800"
+              >
+                {bookingLabel}
+              </Link>
+            </>
           ) : (
             <>
               <Link
@@ -81,15 +97,14 @@ export default async function NavBar() {
               >
                 Create Account
               </Link>
+              <Link
+                href={bookingHref}
+                className="rounded-xl bg-[#031c43] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-800"
+              >
+                {bookingLabel}
+              </Link>
             </>
           )}
-
-          <Link
-            href={bookingHref}
-            className="rounded-xl bg-[#031c43] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-800"
-          >
-            {bookingLabel}
-          </Link>
         </div>
 
         <details className="relative md:hidden">
@@ -116,32 +131,44 @@ export default async function NavBar() {
 
             <div className="my-2 border-t border-slate-100" />
 
-            {isSignedIn ? (
+            {isStaff ? (
               <Link
-                href={dashboardHref}
-                className="block rounded-lg px-3 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+                href="/staff"
+                className="mt-2 block rounded-xl bg-[#031c43] px-3 py-3 text-center text-sm font-semibold text-white transition hover:bg-blue-800"
               >
-                {dashboardLabel}
+                Staff Dashboard
               </Link>
+            ) : isSignedIn ? (
+              <>
+                <Link
+                  href={dashboardHref}
+                  className="block rounded-lg px-3 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+                >
+                  {dashboardLabel}
+                </Link>
+                <Link
+                  href={bookingHref}
+                  className="mt-2 block rounded-xl bg-[#031c43] px-3 py-3 text-center text-sm font-semibold text-white transition hover:bg-blue-800"
+                >
+                  {bookingLabel}
+                </Link>
+              </>
             ) : (
               <>
-              
-
                 <Link
                   href="/register"
                   className="block rounded-lg px-3 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
                 >
                   Create Account
                 </Link>
+                <Link
+                  href={bookingHref}
+                  className="mt-2 block rounded-xl bg-[#031c43] px-3 py-3 text-center text-sm font-semibold text-white transition hover:bg-blue-800"
+                >
+                  {bookingLabel}
+                </Link>
               </>
             )}
-
-            <Link
-              href={bookingHref}
-              className="mt-2 block rounded-xl bg-[#031c43] px-3 py-3 text-center text-sm font-semibold text-white transition hover:bg-blue-800"
-            >
-              {bookingLabel}
-            </Link>
           </nav>
         </details>
       </div>
