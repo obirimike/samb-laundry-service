@@ -42,6 +42,12 @@ enum QuoteStatus {
   WITHDRAWN
 }
 
+enum ReviewStatus {
+  PENDING
+  PUBLISHED
+  HIDDEN
+}
+
 model User {
   id           String   @id @default(uuid())
   name         String
@@ -56,6 +62,8 @@ model User {
   assignmentsReceived   BookingAssignment[] @relation("AssignmentStaff")
   assignmentsCreated    BookingAssignment[] @relation("AssignmentCreatedBy")
   assignmentsUnassigned BookingAssignment[] @relation("AssignmentUnassignedBy")
+  reviews               Review[]            @relation("CustomerReviews")
+  reviewsModerated      Review[]            @relation("ReviewsModerated")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -74,6 +82,7 @@ model Service {
   isActive    Boolean         @default(true)
 
   bookings Booking[]
+  reviews  Review[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -106,6 +115,7 @@ model Booking {
   service     Service             @relation(fields: [serviceId], references: [id], onDelete: Restrict)
   quotes      Quote[]
   assignments BookingAssignment[]
+  review      Review?
 
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
@@ -211,4 +221,31 @@ model BookingAssignment {
   @@index([staffId, isActive])
   @@index([assignedById])
   @@index([unassignedById])
+}
+
+model Review {
+  id         String @id @default(uuid())
+  bookingId  String @unique
+  customerId String
+  serviceId  String
+
+  rating  Int
+  comment String?      @db.Text
+  status  ReviewStatus @default(PENDING)
+
+  moderationNote String?   @db.Text
+  moderatedById  String?
+  moderatedAt    DateTime?
+
+  booking     Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  customer    User    @relation("CustomerReviews", fields: [customerId], references: [id], onDelete: Restrict)
+  service     Service @relation(fields: [serviceId], references: [id], onDelete: Restrict)
+  moderatedBy User?   @relation("ReviewsModerated", fields: [moderatedById], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([serviceId, status, createdAt])
+  @@index([customerId, createdAt])
+  @@index([status, createdAt])
 }

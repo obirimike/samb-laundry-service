@@ -13,6 +13,7 @@ import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import NavBar from "@/components/layout/NavBar";
 import Footer from "@/components/layout/Footer";
+import ReviewForm from "@/components/account/ReviewForm";
 
 function formatDate(date: Date) {
   return new Intl.DateTimeFormat("en-GH", {
@@ -62,6 +63,13 @@ export default async function BookingHistoryPage() {
         select: {
           name: true,
           category: true,
+        },
+      },
+      review: {
+        select: {
+          id: true,
+          status: true,
+          rating: true,
         },
       },
     },
@@ -202,6 +210,33 @@ export default async function BookingHistoryPage() {
                         View details <ArrowRight size={16} />
                       </Link>
                     </div>
+
+                    {booking.status === "COMPLETED" && !booking.review && (
+                      <div className="mt-5 rounded-xl border border-slate-200 p-4">
+                        <h3 className="font-bold text-slate-900">
+                          How was your service?
+                        </h3>
+                        <p className="mt-1 text-sm text-slate-600">
+                          Share feedback on your completed booking.
+                        </p>
+
+                        <ReviewForm
+                          bookingId={booking.id}
+                          bookingNumber={booking.bookingNumber}
+                        />
+                      </div>
+                    )}
+
+                    {booking.review && (
+                      <div className="mt-4 rounded-xl bg-slate-50 p-4">
+                        <p className="font-semibold text-slate-800">
+                          Your review: {booking.review.rating}/5 stars
+                        </p>
+                        <p className="mt-1 text-sm text-slate-600">
+                          Status: {booking.review.status.toLowerCase()}
+                        </p>
+                      </div>
+                    )}
 
                     <div className="mt-5 border-t border-slate-100 pt-4">
                       <p className="text-xs text-slate-500">
