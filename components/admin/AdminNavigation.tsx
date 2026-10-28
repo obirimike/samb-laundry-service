@@ -8,6 +8,7 @@ import {
   CalendarDays,
   ClipboardList,
   LayoutDashboard,
+  Star,
   UserCheck,
   UserPlus,
   Users,
@@ -22,6 +23,7 @@ const navigationItems = [
   { href: "/admin/customers", label: "Customers", icon: Users },
   { href: "/admin/services", label: "Services", icon: BriefcaseBusiness },
   { href: "/admin/quotes", label: "Quotes & pricing", icon: BadgeDollarSign },
+  { href: "/admin/reviews", label: "Reviews", icon: Star },
 ];
 
 export default function AdminNavigation() {
