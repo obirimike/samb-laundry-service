@@ -1,52 +1,162 @@
 # Architecture & Design Documentation
 
-## Context
+## System Overview
 
-The quote-send feature is implemented as a Next.js App Router route handler at `app/api/admin/quotes/[id]/send/route.ts`. It runs on the Node.js runtime, uses the application's session helper for authentication, Prisma for PostgreSQL persistence, and the `sendQuoteEmail` helper for Resend delivery.
+SAMB is a monolithic Next.js 16 application using the App Router pattern. It serves server-rendered pages, client-interactive components, and REST API endpoints from a single deployment. All data is persisted in PostgreSQL via Prisma ORM, authentication is handled by NextAuth v5, and transactional email is delivered through Resend.
 
-Related components:
+```text
+┌─────────────────────────────────────────────────────┐
+│                    Next.js App                      │
+│  ┌──────────┐  ┌──────────────┐  ┌──────────────┐  │
+│  │  Public   │  │   Customer   │  │    Admin     │  │
+│  │  Pages    │  │   Account    │  │  Dashboard   │  │
+│  └────┬─────┘  └──────┬───────┘  └──────┬───────┘  │
+│       │               │                 │           │
+│  ┌────┴───────────────┴─────────────────┴────────┐  │
+│  │              API Route Handlers               │  │
+│  │         (21 endpoints, role-guarded)           │  │
+│  └────┬──────────┬──────────────┬────────────────┘  │
+│       │          │              │                    │
+│  ┌────┴────┐ ┌───┴────┐  ┌─────┴──────┐            │
+│  │ Prisma  │ │NextAuth│  │  Resend    │            │
+│  │  (ORM)  │ │ (Auth) │  │  (Email)   │            │
+│  └────┬────┘ └───┬────┘  └────────────┘            │
+└───────┼──────────┼──────────────────────────────────┘
+        │          │
+   ┌────┴────┐  ┌──┴──────────┐
+   │PostgreSQL│  │Upstash Redis│
+   │   (DB)   │  │(Rate Limit) │
+   └─────────┘  └─────────────┘
+```
 
-- `app/api/admin/quotes/route.ts` creates and lists quotes.
-- `app/api/admin/quotes/[id]/route.ts` supports other quote operations, including its own draft-send handler.
-- `app/admin/quotes/page.tsx` loads the administrator quote-management UI.
-- `components/admin/QuoteManagement.tsx` calls the send endpoint and refreshes the quote list.
-- `app/account/quotes/page.tsx` provides customer quote data.
-- `lib/emails.ts` renders and sends quote email.
-- `lib/quotes.ts` expires sent quotes and creates expiry notifications.
-- `prisma/schema.prisma` defines quote statuses, quote-booking relationships, and notifications.
+## Route Architecture
 
-## Send request flow
+### Route Groups
 
-1. The route resolves the session and requires an authenticated user with role `ADMIN`.
-2. It reads the quote and the related booking, customer, and service within a Prisma transaction.
-3. It returns `404` for a missing quote and `409` if the current status is neither `DRAFT` nor `SENT`.
-4. If the quote has expired, it marks the quote `EXPIRED` and returns `400`.
-5. For a first send, it conditionally updates `DRAFT` to `SENT` and records `sentAt`. A conditional update prevents overwriting a concurrent status change. In the same transaction, it creates the customer's `QUOTE_SENT` notification.
-6. After the database transaction commits, the route calls `sendQuoteEmail` with the customer and quote details.
-7. It returns `200` with `emailSent` and a message reflecting delivery success or failure.
+The application uses Next.js route groups for layout segmentation:
 
-## Persistence and consistency
+| Group | Path Prefix | Layout | Purpose |
+| --- | --- | --- | --- |
+| `(auth)` | `/login`, `/register` | Minimal | Authentication pages |
+| `(public)` | `/services`, `/book`, `/contact`, `/about`, `/how-it-works` | NavBar + Footer | Public-facing pages |
+| `account` | `/account/*` | Customer layout | Authenticated customer area |
+| `admin` | `/admin/*` | AdminNavigation sidebar | Admin dashboard |
+| `staff` | `/staff/*` | Staff layout | Staff portal |
 
-The database transaction protects the first-send state update and notification creation. Email delivery happens after that transaction and cannot be atomic with the PostgreSQL commit. Consequently, the quote can be `SENT` and visible in the customer's account even if Resend is unavailable. The endpoint explicitly reports this outcome as `emailSent: false`; administrators may retry because `SENT` quotes remain sendable.
+### API Layer (21 Endpoints)
 
-Repeated sends do not transition the quote again or recreate the first-send notification. A conditional `updateMany` guards the `DRAFT` to `SENT` transition against concurrent modifications.
+```text
+/api/
+├── auth/[...nextauth]              # NextAuth catch-all
+├── register                        # Customer registration
+├── contact                         # Contact form submission
+├── services                        # List active services
+├── bookings                        # Create booking request
+├── notifications                   # List customer notifications
+├── notifications/[id]              # Single notification operations
+├── notifications/read-all          # Bulk mark-as-read
+├── account/
+│   ├── reviews                     # Customer review operations
+│   └── quotes/[id]/respond         # Accept/decline quote
+└── admin/
+    ├── bookings/[id]               # Update booking
+    ├── bookings/[id]/assignments   # Manage staff assignments
+    ├── bookings/[id]/assignments/[assignmentId]  # Single assignment
+    ├── quotes                      # Create/list quotes
+    ├── quotes/[id]                 # Quote operations
+    ├── quotes/[id]/revise          # Create revision
+    ├── quotes/[id]/send            # Send quote email
+    ├── reviews                     # Moderate reviews
+    ├── services                    # Manage services
+    ├── services/[id]               # Single service operations
+    └── staff                       # Manage staff accounts
+```
 
-## Data model
+## Data Model
 
-`Quote` stores a unique quote number, booking and creator relations, decimal amount, currency, JSON breakdown, terms, status, optional expiry and send/response timestamps, and revision metadata. The default currency is `GHS`. A quote belongs to a booking; the route obtains the recipient email and service information through that booking.
+### Entity Relationships
 
-`Notification` stores the first-send in-app notification for the customer. Notifications use the `QUOTE_SENT` type and reference the customer user.
+```text
+User (CUSTOMER/ADMIN/STAFF)
+ ├── Booking ──→ Service
+ │    ├── Quote (revision chain via previousQuoteId)
+ │    ├── BookingAssignment ──→ User (staff)
+ │    └── Review ──→ Service (one per booking)
+ ├── Notification
+ └── ContactMessage (standalone)
+```
 
-## Runtime and errors
+### Key Model Details
 
-The route exports `runtime = "nodejs"` and `dynamic = "force-dynamic"`. Expected authorization, lookup, expiry, status, and concurrency outcomes return explicit JSON messages and HTTP statuses. Unexpected errors are logged server-side and returned as `500` with a generic message.
+**Quote revision chain** — Quotes support a linked-list revision structure via `previousQuoteId`. Each revision increments a `revision` counter. A unique constraint on `previousQuoteId` prevents concurrent or duplicate successors. The latest revision in a chain is the only one eligible for further revision.
 
-The admin client calls the route with a bodyless `POST`. For `200` responses, the client currently displays `message`; the `emailSent` field is provided in the API response for delivery-aware callers.
+**Review moderation** — Reviews default to `PENDING` and must transition to `PUBLISHED` before they affect aggregate ratings or appear publicly. The `Review` model links to the moderating admin and records moderation timestamps.
 
-## Email boundary
+**Booking assignments** — The `BookingAssignment` join model supports multiple staff per booking with full audit trail (assigned by, unassigned by, timestamps, notes).
 
-`sendQuoteEmail` is the external-service boundary. It sends through Resend using `RESEND_API_KEY`, chooses `EMAIL_FROM` when configured, and links to the customer quote page using `NEXT_PUBLIC_APP_URL` (falling back to localhost for development). Email HTML values are escaped by the email helper.
+**Currency** — The platform defaults to GHS (Ghanaian Cedi). Quote amounts use `Decimal(12,2)` precision. Display formatting uses `Intl.NumberFormat` with `en-GH` locale.
 
-## Design caveat
+## Authentication & Authorisation
 
-`app/api/admin/quotes/[id]/route.ts` also contains an older draft-send flow. It has different ordering and failure semantics from the dedicated `/send` route. The administrator UI uses the dedicated `/send` route. Keep these surfaces in mind when changing quote email behavior so they do not drift further.
+### Authentication Flow
+
+1. User submits credentials (email + password) to the NextAuth Credentials provider.
+2. The provider looks up the user by email in PostgreSQL, verifies the password hash with `bcryptjs`.
+3. A JWT is issued containing `id`, `name`, `email`, and `role`.
+4. Session callbacks inject `id` and `role` into the client-accessible session object.
+
+### Authorisation
+
+- **Server-side only** — All authorisation checks happen in route handlers. Client-side UI hiding is cosmetic, not a security boundary.
+- **Admin routes** use `requireAdmin()` helper which validates the session and checks for `ADMIN` role.
+- **Customer routes** validate the session and check resource ownership (e.g. a customer can only view their own bookings).
+- **Rate limiting** is enforced via Upstash Redis with four policies:
+
+| Policy | Limit | Window | Applied To |
+| --- | --- | --- | --- |
+| `auth` | 10 requests | 10 min | Login endpoint |
+| `registration` | 5 requests | 10 min | Registration endpoint |
+| `contact` | 3 requests | 10 min | Contact form |
+| `booking` | 10 requests | 10 min | Booking creation |
+
+In development, rate limiting is skipped if Upstash Redis variables are unset. In production (NODE_ENV === "production"), missing Redis variables throw an explicit configuration error to prevent rate limiting from silently failing open.
+
+### Middleware
+
+The application uses `proxy.ts` as the middleware entry point (via NextAuth's `auth()` wrapper). This rate-limits authentication POST requests using Upstash Redis.
+
+## Persistence & Consistency
+
+### Transaction Boundaries
+
+- **Quote first-send:** The `DRAFT` → `SENT` status transition and customer notification creation share a single Prisma transaction. A conditional `updateMany` guards against concurrent modifications.
+- **Quote revision:** The predecessor status change (to `WITHDRAWN` if previously `SENT`), customer notification, and new revision creation are transacted together.
+- **Quote expiry:** Batch processing of expired quotes uses transactions with conditional updates for concurrency safety.
+
+### Email Delivery Boundary
+
+Email delivery (via Resend) occurs **after** database transactions commit. This means:
+
+- A quote can be `SENT` in the database even if Resend is unavailable.
+- The API explicitly reports `emailSent: false` in this case.
+- Administrators can retry while the quote remains `SENT`.
+- The same pattern applies to booking status change emails.
+
+## External Service Integration
+
+| Service | Purpose | Configuration | Failure Mode |
+| --- | --- | --- | --- |
+| **PostgreSQL** | Primary data store | `DATABASE_URL` | Application cannot start |
+| **Resend** | Transactional email | `RESEND_API_KEY`, `EMAIL_FROM` | `emailSent: false` — app continues without email |
+| **Upstash Redis** | Rate limiting | `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN` | Rate limiting disabled — app continues unthrottled |
+| **Unsplash** | Service card images | `next.config.ts` remote patterns | Fallback to local SVG placeholders |
+
+## Design Decisions & Caveats
+
+1. **No `middleware.ts`** — The `proxy.ts` file serves as the middleware entry point, using NextAuth's auth wrapper for rate limiting. This is an intentional design choice to co-locate rate limiting with auth.
+
+2. **Dual quote-send paths** — `app/api/admin/quotes/[id]/route.ts` contains an older draft-send flow with different ordering and failure semantics from the dedicated `/send` route. The admin UI uses the dedicated `/send` route. Keep these surfaces aligned when modifying quote email behaviour.
+
+3. **Driver adapter** — Prisma uses `@prisma/adapter-pg` (PrismaPg) rather than the default query engine. This is configured in `lib/db.ts` via a `pg.Pool` instance.
+
+4. **Service images** — Static image URLs and highlight text are maintained in `lib/services-data.ts` rather than in the database, with Unsplash URLs for high-quality photos and category-based SVG fallbacks.
