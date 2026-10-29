@@ -18,6 +18,7 @@ import {
   getServiceImageUrl,
   getServiceHighlights,
 } from "@/lib/services-data";
+import PublishedReviews from "@/components/services/PublishedReviews";
 
 type ServicePageProps = {
   params: Promise<{ slug: string }>;
@@ -226,6 +227,8 @@ export default async function ServiceDetailPage({
                 confirm all aspects before our team arrives.
               </p>
             </div>
+
+            <PublishedReviews serviceId={service.id} />
           </div>
 
           {/* Booking Summary Box */}
