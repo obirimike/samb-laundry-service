@@ -11,14 +11,14 @@ import {
   Home,
   Bug,
 } from "lucide-react";
-import { ServiceItem } from "@/types/service";
+import type { ServiceWithRatings } from "@/lib/service-types";
 import {
   getServiceImageUrl,
   getServiceHighlights,
 } from "@/lib/services-data";
 
 interface ServiceCardProps {
-  service: ServiceItem;
+  service: ServiceWithRatings;
   featured?: boolean;
 }
 
@@ -113,6 +113,42 @@ export default function ServiceCard({
         <p className="min-h-[48px] text-sm leading-relaxed text-slate-600 line-clamp-2">
           {service.description}
         </p>
+
+        {/* Star Rating Display */}
+        <div className="mt-3 flex flex-wrap items-center gap-2 text-sm">
+          {service.averageRating !== null ? (
+            <>
+              <span
+                className="tracking-wide text-amber-500"
+                aria-label={`${service.averageRating.toFixed(1)} out of 5 stars`}
+              >
+                {"★".repeat(
+                  Math.max(0, Math.min(5, Math.round(service.averageRating)))
+                )}
+                <span className="text-slate-300">
+                  {"★".repeat(
+                    5 -
+                      Math.max(
+                        0,
+                        Math.min(5, Math.round(service.averageRating))
+                      )
+                  )}
+                </span>
+              </span>
+
+              <span className="font-semibold text-slate-800">
+                {service.averageRating.toFixed(1)}
+              </span>
+
+              <span className="text-slate-500">
+                ({service.reviewCount}{" "}
+                {service.reviewCount === 1 ? "review" : "reviews"})
+              </span>
+            </>
+          ) : (
+            <span className="text-slate-500">No reviews yet</span>
+          )}
+        </div>
 
         {/* Highlights List */}
         <div className="mt-4 space-y-2 border-t border-slate-100 pt-4">
