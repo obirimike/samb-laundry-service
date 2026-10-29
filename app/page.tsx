@@ -28,10 +28,37 @@ export default async function HomePage({
 }: HomePageProps) {
     const { signedOut } = await searchParams;
 
-    const services = await db.service.findMany({
-        where: { isActive: true },
-        orderBy: [{ category: "asc" }, { name: "asc" }],
-        take: 6,
+    const [services, reviewStats] = await Promise.all([
+        db.service.findMany({
+            where: { isActive: true },
+            orderBy: [{ category: "asc" }, { name: "asc" }],
+            take: 6,
+        }),
+        db.review.groupBy({
+            by: ["serviceId"],
+            where: { status: "PUBLISHED" },
+            _avg: { rating: true },
+            _count: { _all: true },
+        }),
+    ]);
+
+    const statsByServiceId = new Map(
+        reviewStats.map((item) => [
+            item.serviceId,
+            {
+                averageRating: item._avg.rating,
+                reviewCount: item._count._all,
+            },
+        ])
+    );
+
+    const servicesWithRatings = services.map((service) => {
+        const stats = statsByServiceId.get(service.id);
+        return {
+            ...service,
+            averageRating: stats?.averageRating ?? null,
+            reviewCount: stats?.reviewCount ?? 0,
+        };
     });
 
     return (
@@ -174,7 +201,7 @@ export default async function HomePage({
                         </div>
 
                         <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                            {services.map((service) => (
+                            {servicesWithRatings.map((service) => (
                                 <ServiceCard key={service.id} service={service} />
                             ))}
                         </div>

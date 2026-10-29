@@ -53,9 +53,21 @@ export async function limitRequest(
   policy: RateLimitPolicy,
   suffix?: string
 ) {
-  if (!rateLimiters) return null;
+  if (!rateLimiters) {
+    if (process.env.NODE_ENV === "production") {
+      throw new Error(
+        "Rate limiting is not configured. Set both " +
+          "UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN."
+      );
+    }
 
-  return rateLimiters[policy].limit(getRequestIdentifier(request, suffix));
+    // Allow local development without Redis.
+    return null;
+  }
+
+  return rateLimiters[policy].limit(
+    getRequestIdentifier(request, suffix)
+  );
 }
 
 export function rateLimitHeaders(result: {

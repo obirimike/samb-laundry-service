@@ -2,13 +2,14 @@
 
 import { useState } from "react";
 import { Sparkles, WashingMachine, LayoutGrid, Home, Bug } from "lucide-react";
-import { ServiceItem, ServiceCategory } from "@/types/service";
+import { ServiceCategory } from "@/types/service";
+import type { ServiceWithRatings } from "@/lib/service-types";
 import ServiceCard from "./ServiceCard";
 
 type FilterCategory = "ALL" | ServiceCategory;
 
 interface ServiceGridProps {
-  services: ServiceItem[];
+  services: ServiceWithRatings[];
   enableFilterTabs?: boolean;
   initialFilter?: FilterCategory;
 }
