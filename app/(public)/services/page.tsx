@@ -2,7 +2,6 @@ import Link from "next/link";
 import { ArrowRight, Sparkles } from "lucide-react";
 import { db } from "@/lib/db";
 import ServiceGrid from "@/components/services/ServiceGrid";
-import { ServiceItem } from "@/types/service";
 
 export const metadata = {
   title: "Services | SAMB's Cleaning, Laundry, Domestic Support & Pest Control",
@@ -11,20 +10,45 @@ export const metadata = {
 };
 
 export default async function ServicesPage() {
-  const rawServices = await db.service.findMany({
-    where: { isActive: true },
-    orderBy: [{ category: "asc" }, { name: "asc" }],
-  });
+  const [services, reviewStats] = await Promise.all([
+    db.service.findMany({
+      where: { isActive: true },
+      orderBy: [{ category: "asc" }, { name: "asc" }],
+    }),
 
-  const services: ServiceItem[] = rawServices.map((service) => ({
-    id: service.id,
-    name: service.name,
-    slug: service.slug,
-    description: service.description,
-    category: service.category,
-    imageUrl: service.imageUrl,
-    isActive: service.isActive,
-  }));
+    db.review.groupBy({
+      by: ["serviceId"],
+      where: {
+        status: "PUBLISHED",
+      },
+      _avg: {
+        rating: true,
+      },
+      _count: {
+        _all: true,
+      },
+    }),
+  ]);
+
+  const statsByServiceId = new Map(
+    reviewStats.map((item) => [
+      item.serviceId,
+      {
+        averageRating: item._avg.rating,
+        reviewCount: item._count._all,
+      },
+    ])
+  );
+
+  const servicesWithRatings = services.map((service) => {
+    const stats = statsByServiceId.get(service.id);
+
+    return {
+      ...service,
+      averageRating: stats?.averageRating ?? null,
+      reviewCount: stats?.reviewCount ?? 0,
+    };
+  });
 
   return (
     <main className="min-h-screen bg-slate-50">
@@ -47,7 +71,7 @@ export default async function ServicesPage() {
 
       {/* Services Grid with Interactive Tabs */}
       <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        <ServiceGrid services={services} enableFilterTabs={true} />
+        <ServiceGrid services={servicesWithRatings} enableFilterTabs={true} />
 
         {/* Custom Help Box */}
         <div className="mt-16 rounded-3xl bg-[#031c43] p-8 text-white shadow-lg sm:p-10">
