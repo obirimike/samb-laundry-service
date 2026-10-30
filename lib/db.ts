@@ -11,15 +11,26 @@ if (!connectionString) {
   throw new Error("DATABASE_URL is not set");
 }
 
-const adapter = new PrismaPg({ connectionString });
+const caCertificate = process.env.SUPABASE_CA_CERT_BASE64;
+
+const adapter = new PrismaPg({
+  connectionString,
+  ssl: caCertificate
+    ? {
+        ca: Buffer.from(caCertificate, "base64").toString("utf8"),
+        rejectUnauthorized: true,
+      }
+    : undefined,
+});
 
 export const db =
   globalForPrisma.prisma ??
   new PrismaClient({
     adapter,
-    log: process.env.NODE_ENV === "development"
-      ? ["error", "warn"]
-      : ["error"],
+    log:
+      process.env.NODE_ENV === "development"
+        ? ["error", "warn"]
+        : ["error"],
   });
 
 if (process.env.NODE_ENV !== "production") {
