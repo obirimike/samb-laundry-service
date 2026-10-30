@@ -2,8 +2,39 @@ import { Pool } from "pg";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient, ServiceCategory } from "@prisma/client";
 
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-const adapter = new PrismaPg(pool);
+const rawConnectionString =
+  process.env.SEED_DATABASE_URL ??
+  process.env.DATABASE_URL;
+
+if (!rawConnectionString) {
+  throw new Error("No database connection URL is configured.");
+}
+
+const caCertificate = process.env.SUPABASE_CA_CERT_BASE64;
+
+const databaseUrl = new URL(rawConnectionString);
+
+if (caCertificate) {
+  for (const parameter of [
+    "sslmode",
+    "sslrootcert",
+    "sslcert",
+    "sslkey",
+  ]) {
+    databaseUrl.searchParams.delete(parameter);
+  }
+}
+
+const adapter = new PrismaPg({
+  connectionString: databaseUrl.toString(),
+  ssl: caCertificate
+    ? {
+        ca: Buffer.from(caCertificate, "base64").toString("utf8"),
+        rejectUnauthorized: true,
+      }
+    : undefined,
+});
+
 const prisma = new PrismaClient({ adapter });
 
 const services = [
