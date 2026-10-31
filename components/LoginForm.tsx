@@ -1,0 +1,176 @@
+"use client";
+
+import Link from "next/link";
+import Image from "next/image";
+import { Eye, EyeOff } from "lucide-react";
+import { signIn } from "next-auth/react";
+import { useSearchParams } from "next/navigation";
+import { FormEvent, useState } from "react";
+
+/**
+ * Safe callback URL handling – unchanged from original page.
+ */
+function getSafeCallbackUrl(callbackUrl: string | null): string {
+  if (
+    !callbackUrl ||
+    !callbackUrl.startsWith("/") ||
+    callbackUrl.startsWith("//") ||
+    callbackUrl.includes("\\")
+  ) {
+    return "/account";
+  }
+  try {
+    const baseUrl = window.location.origin;
+    const destination = new URL(callbackUrl, baseUrl);
+    if (destination.origin !== baseUrl) return "/account";
+    if (destination.pathname === "/login" || destination.pathname === "/register") {
+      return "/account";
+    }
+    return `${destination.pathname}${destination.search}${destination.hash}`;
+  } catch {
+    return "/account";
+  }
+}
+
+export default function LoginForm() {
+  const searchParams = useSearchParams();
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setError("");
+    setLoading(true);
+    try {
+      const result = await signIn("credentials", {
+        email: email.trim().toLowerCase(),
+        password,
+        redirect: false,
+      });
+      if (!result?.ok || result.error) {
+        setError("Invalid email address or password.");
+        return;
+      }
+      const callbackUrl = getSafeCallbackUrl(searchParams.get("callbackUrl"));
+      window.location.assign(callbackUrl);
+    } catch {
+      setError("Unable to sign in right now. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <main className="flex min-h-screen items-center justify-center bg-gray-300 px-4 py-12">
+      <div className="w-full max-w-md overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl">
+        <div className="bg-[#031c43] px-8 py-9 text-white">
+          <Link href="/" className="text-sm font-semibold text-blue-100 hover:text-white">
+            ← Back to home
+          </Link>
+
+          <div className="mt-6 flex items-center gap-3">
+            <span className="relative flex h-12 w-12 shrink-0 overflow-hidden rounded-full border border-white/30 bg-blue-900 shadow-md">
+              <Image src="/images/logo/samb-logo.jpeg" alt="SAMB's Logo" fill sizes="48px" className="object-cover" />
+            </span>
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-blue-100">SAMB&apos;S</p>
+              <p className="text-xs font-medium text-blue-200">Laundry &amp; Klinin Services</p>
+            </div>
+          </div>
+
+          <h1 className="mt-4 text-3xl font-bold">Welcome back</h1>
+          <p className="mt-2 text-sm leading-6 text-blue-100">
+            Sign in to manage your service requests and bookings.
+          </p>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-5 p-8">
+          {searchParams.get("registered") === "true" && (
+            <div className="rounded-xl border border-green-200 bg-green-50 p-3 text-sm text-green-800">
+              Your account was created successfully. Please sign in.
+            </div>
+          )}
+
+          {error && (
+            <div role="alert" className="rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+              {error}
+            </div>
+          )}
+
+          <div>
+            <label htmlFor="email" className="mb-2 block text-sm font-semibold text-slate-700">
+              Email address
+            </label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              autoComplete="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="you@example.com"
+              className="w-full rounded-xl border border-slate-300 px-4 py-3 text-black outline-none transition focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="password" className="mb-2 block text-sm font-semibold text-slate-700">
+              Password
+            </label>
+            <div className="relative">
+              <input
+                id="password"
+                name="password"
+                type={showPassword ? "text" : "password"}
+                autoComplete="current-password"
+                autoCapitalize="none"
+                spellCheck={false}
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Enter your password"
+                className="w-full rounded-xl border border-slate-300 px-4 py-3 pr-11 text-black outline-none transition focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100"
+              />
+              
+<button
+  type="button"
+  onClick={() => setShowPassword((prev) => !prev)}
+  aria-label={showPassword ? "Hide password" : "Show password"}
+  aria-pressed={showPassword}
+  data-testid="toggle-password"
+  className="absolute inset-y-0 right-0 z-10 flex h-12 w-12 touch-manipulation items-center justify-center rounded-r-xl text-slate-500 hover:text-slate-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-inset focus-visible:outline-indigo-600"
+>
+  {showPassword ? (
+    <EyeOff size={20} />
+  ) : (
+    <Eye size={20} />
+  )}
+</button>
+
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full rounded-xl bg-[#031c43] px-5 py-3.5 font-semibold text-white transition hover:bg-[#031c43]/80 disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {loading ? "Signing in..." : "Sign in"}
+          </button>
+
+          <p className="text-center text-sm text-slate-600">
+            Don&apos;t have an account?{' '}
+            <Link href="/register" className="font-semibold text-blue-900 hover:underline">
+              Create one
+            </Link>
+          </p>
+        </form>
+      </div>
+    </main>
+  );
+}
