@@ -26,16 +26,31 @@ test("password visibility control works on a mobile viewport", async ({
     isMobile: true,
     hasTouch: true,
   });
+
   const page = await context.newPage();
+
   await page.goto("/login");
 
   const password = page.locator("#password");
-  const showPassword = page.getByRole("button", { name: "Show password" });
-  await showPassword.tap();
-  await expect(showPassword).toHaveAttribute("aria-pressed", "true");
-  await expect(password).toHaveAttribute("type", "text");
-  await page.getByRole("button", { name: "Hide password" }).tap();
+
   await expect(password).toHaveAttribute("type", "password");
+
+  await page.getByRole("button", { name: "Show password" }).tap();
+
+  await expect(
+    page.getByRole("button", { name: "Hide password" })
+  ).toHaveAttribute("aria-pressed", "true");
+
+  await expect(password).toHaveAttribute("type", "text");
+
+  await page.getByRole("button", { name: "Hide password" }).tap();
+
+  await expect(
+    page.getByRole("button", { name: "Show password" })
+  ).toHaveAttribute("aria-pressed", "false");
+
+  await expect(password).toHaveAttribute("type", "password");
+
   await expect
     .poll(() =>
       page.evaluate(
@@ -43,6 +58,7 @@ test("password visibility control works on a mobile viewport", async ({
       )
     )
     .toBe(true);
+
   await context.close();
 });
 
