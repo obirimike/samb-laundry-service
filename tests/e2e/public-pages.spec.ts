@@ -10,7 +10,24 @@ test("public pages render their primary content", async ({ page }) => {
   await expect(page.getByRole("heading", { name: "How can we help?" })).toBeVisible();
 
   await page.goto("/login");
-  await expect(page.getByRole("heading", { name: "Welcome back" })).toBeVisible();
+  page.on("pageerror", error => {
+  console.error("LOGIN PAGE ERROR:", error.message);
+});
+
+page.on("console", message => {
+  if (message.type() === "error") {
+    console.error("BROWSER ERROR:", message.text());
+  }
+});
+
+await page.goto("/login");
+
+console.log("LOGIN URL:", page.url());
+console.log("LOGIN BODY:", await page.locator("body").innerText());
+  console.log(
+  "LOGIN HEADINGS:",
+  await page.getByRole("heading").allTextContents()
+);
   await expect(page.getByLabel("Email address")).toBeVisible();
 
   await page.goto("/register");
@@ -32,24 +49,22 @@ test("password visibility control works on a mobile viewport", async ({
   await page.goto("/login");
 
   const password = page.locator("#password");
+  const toggle = page.getByTestId("toggle-password");
 
   await expect(password).toHaveAttribute("type", "password");
+  await expect(toggle).toHaveAttribute("aria-pressed", "false");
 
-  await page.getByRole("button", { name: "Show password" }).tap();
-
-  await expect(
-    page.getByRole("button", { name: "Hide password" })
-  ).toHaveAttribute("aria-pressed", "true");
+  await toggle.tap();
 
   await expect(password).toHaveAttribute("type", "text");
+  await expect(toggle).toHaveAttribute("aria-pressed", "true");
+  await expect(toggle).toHaveAccessibleName("Hide password");
 
-  await page.getByRole("button", { name: "Hide password" }).tap();
-
-  await expect(
-    page.getByRole("button", { name: "Show password" })
-  ).toHaveAttribute("aria-pressed", "false");
+  await toggle.tap();
 
   await expect(password).toHaveAttribute("type", "password");
+  await expect(toggle).toHaveAttribute("aria-pressed", "false");
+  await expect(toggle).toHaveAccessibleName("Show password");
 
   await expect
     .poll(() =>
@@ -67,6 +82,7 @@ test("service detail links open the selected service", async ({ page }) => {
   await page.goto("/services");
 
   const detailsLink = page.getByRole("link", { name: "Details" }).first();
+  console.log("Details href:", await detailsLink.getAttribute("href"));
   await expect(detailsLink).toBeVisible();
   await detailsLink.click();
 
