@@ -5,7 +5,7 @@ import Image from "next/image";
 import { Eye, EyeOff } from "lucide-react";
 import { signIn } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
-import { FormEvent, useState } from "react";
+import { FormEvent, useState, Suspense } from "react";
 
 /**
  * Safe callback URL handling – unchanged from original page.
@@ -32,9 +32,8 @@ function getSafeCallbackUrl(callbackUrl: string | null): string {
   }
 }
 
-export default function LoginForm() {
+function LoginFormContent() {
   const searchParams = useSearchParams();
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -45,16 +44,19 @@ export default function LoginForm() {
     event.preventDefault();
     setError("");
     setLoading(true);
+
     try {
       const result = await signIn("credentials", {
         email: email.trim().toLowerCase(),
         password,
         redirect: false,
       });
+
       if (!result?.ok || result.error) {
         setError("Invalid email address or password.");
         return;
       }
+
       const callbackUrl = getSafeCallbackUrl(searchParams.get("callbackUrl"));
       window.location.assign(callbackUrl);
     } catch {
@@ -71,7 +73,6 @@ export default function LoginForm() {
           <Link href="/" className="text-sm font-semibold text-blue-100 hover:text-white">
             ← Back to home
           </Link>
-
           <div className="mt-6 flex items-center gap-3">
             <span className="relative flex h-12 w-12 shrink-0 overflow-hidden rounded-full border border-white/30 bg-blue-900 shadow-md">
               <Image src="/images/logo/samb-logo.jpeg" alt="SAMB's Logo" fill sizes="48px" className="object-cover" />
@@ -81,7 +82,6 @@ export default function LoginForm() {
               <p className="text-xs font-medium text-blue-200">Laundry &amp; Klinin Services</p>
             </div>
           </div>
-
           <h1 className="mt-4 text-3xl font-bold">Welcome back</h1>
           <p className="mt-2 text-sm leading-6 text-blue-100">
             Sign in to manage your service requests and bookings.
@@ -134,24 +134,20 @@ export default function LoginForm() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Enter your password"
-                className="w-full rounded-xl border border-slate-300 px-4 py-3 pr-11 text-black outline-none transition focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100"
+                className="w-full rounded-xl border border-slate-300 px-4 py-3 pr-12 text-black outline-none transition focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100"
               />
-              
-<button
-  type="button"
-  onClick={() => setShowPassword((prev) => !prev)}
-  aria-label={showPassword ? "Hide password" : "Show password"}
-  aria-pressed={showPassword}
-  data-testid="toggle-password"
-  className="absolute inset-y-0 right-0 z-10 flex h-12 w-12 touch-manipulation items-center justify-center rounded-r-xl text-slate-500 hover:text-slate-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-inset focus-visible:outline-indigo-600"
->
-  {showPassword ? (
-    <EyeOff size={20} />
-  ) : (
-    <Eye size={20} />
-  )}
-</button>
-
+              <button
+                type="button"
+                onClick={() => {
+                  setShowPassword((current) => !current);
+                }}
+                aria-label={showPassword ? "Hide password" : "Show password"}
+                aria-pressed={showPassword}
+                data-testid="toggle-password"
+                className="absolute inset-y-0 right-0 z-10 flex w-12 touch-manipulation items-center justify-center rounded-r-xl text-slate-500 hover:text-slate-800"
+              >
+                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
             </div>
           </div>
 
@@ -172,5 +168,19 @@ export default function LoginForm() {
         </form>
       </div>
     </main>
+  );
+}
+
+export default function LoginForm() {
+  return (
+    <Suspense fallback={
+      <main className="flex min-h-screen items-center justify-center bg-gray-300 px-4 py-12">
+        <div className="w-full max-w-md overflow-hidden rounded-3xl border border-slate-200 bg-white p-8 text-center shadow-xl">
+          Loading login form...
+        </div>
+      </main>
+    }>
+      <LoginFormContent />
+    </Suspense>
   );
 }

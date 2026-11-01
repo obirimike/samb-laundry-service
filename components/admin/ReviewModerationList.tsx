@@ -293,7 +293,7 @@ export default function ReviewModerationList({
                     maxLength={2000}
                     rows={3}
                     placeholder="Optional note explaining the moderation decision"
-                    className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
+                    className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-600 outline-none focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
                   />
 
                   <p className="mt-1 text-xs text-slate-500">
