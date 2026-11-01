@@ -143,7 +143,7 @@ export default async function PublishedReviews({
                   </p>
                 )}
 
-                <p className="mt-4 text-sm font-semibold text-slate-900">
+                <p className="mt-4 text-sm text-slate-800 font-semibold text-slate-900">
                   {firstName}
                 </p>
 
