@@ -1,6 +1,8 @@
 "use client";
 
 import { useMemo, useState, type FormEvent } from "react";
+import WhatsAppButton from "@/components/admin/WhatsAppButton";
+import { buildQuoteWhatsAppMessage } from "@/lib/whatsapp";
 
 type QuoteStatus =
   | "DRAFT"
@@ -19,6 +21,7 @@ type BookingOption = {
   customer: {
     name: string;
     email: string;
+    phone?: string | null;
   };
   service: {
     name: string;
@@ -51,6 +54,7 @@ type QuoteRecord = {
       id: string;
       name: string;
       email: string;
+      phone?: string | null;
     };
     service: {
       name: string;
@@ -637,6 +641,17 @@ export default function QuoteManagement({
 
                       <td className="px-5 py-4">
                         <div className="flex flex-wrap gap-2">
+                          <WhatsAppButton
+                            phone={quote.booking.customer.phone}
+                            message={buildQuoteWhatsAppMessage({
+                              customerName: quote.booking.customer.name,
+                              quoteNumber: quote.quoteNumber,
+                              bookingNumber: quote.booking.bookingNumber,
+                              status: quote.status,
+                            })}
+                            variant="compact"
+                            label="WhatsApp"
+                          />
                           {(quote.status === "DRAFT" ||
                             quote.status === "SENT") && (
                             <button
@@ -1016,6 +1031,23 @@ export default function QuoteManagement({
                   <p className="mt-1 break-all text-sm text-slate-500">
                     {responseQuote.booking.customer.email}
                   </p>
+                  {responseQuote.booking.customer.phone && (
+                    <p className="mt-1 text-sm text-slate-600">
+                      {responseQuote.booking.customer.phone}
+                    </p>
+                  )}
+                  <div className="mt-3">
+                    <WhatsAppButton
+                      phone={responseQuote.booking.customer.phone}
+                      message={buildQuoteWhatsAppMessage({
+                        customerName: responseQuote.booking.customer.name,
+                        quoteNumber: responseQuote.quoteNumber,
+                        bookingNumber: responseQuote.booking.bookingNumber,
+                        status: responseQuote.status,
+                      })}
+                      showHelperText
+                    />
+                  </div>
                 </div>
 
                 <div className="rounded-xl bg-slate-50 p-4">
