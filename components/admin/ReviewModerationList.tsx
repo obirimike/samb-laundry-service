@@ -162,7 +162,7 @@ export default function ReviewModerationList({
             key={item}
             type="button"
             onClick={() => setFilter(item)}
-            className={`rounded-xl border p-4 text-left transition ${
+            className={`rounded-xl border p-4 text-left transition cursor-pointer ${
               filter === item
                 ? "border-slate-900 bg-slate-900 text-white"
                 : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
@@ -297,7 +297,7 @@ export default function ReviewModerationList({
                   />
 
                   <p className="mt-1 text-xs text-slate-500">
-                    This note is for admin use and is not displayed as the customer's public review.
+                    This note is for admin use and is not displayed as the customer&apos;s public review.
                   </p>
                 </div>
 

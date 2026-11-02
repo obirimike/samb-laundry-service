@@ -42,6 +42,7 @@ export async function POST(
             bookingNumber: true,
             customer: {
               select: {
+                id: true,
                 name: true,
                 email: true,
               },
@@ -84,6 +85,43 @@ export async function POST(
       );
     }
 
+    // Persist database changes independently of email delivery.
+    const updated = await db.quote.updateMany({
+      where: {
+        id: quote.id,
+        status: "DRAFT",
+      },
+      data: {
+        status: "SENT",
+        sentAt: now,
+      },
+    });
+
+    if (updated.count !== 1) {
+      return NextResponse.json(
+        {
+          message:
+            "The quote status changed concurrently. Refresh the quote list and verify its status.",
+        },
+        { status: 409 }
+      );
+    }
+
+    // Create in-app notification independently of email delivery.
+    try {
+      await db.notification.create({
+        data: {
+          userId: quote.booking.customer.id,
+          title: "A service quote is ready",
+          message: `Quote ${quote.quoteNumber} is ready for booking ${quote.booking.bookingNumber}.`,
+          type: "QUOTE_SENT",
+        },
+      });
+    } catch (notifError) {
+      console.error("Failed to create quote sent notification:", notifError);
+    }
+
+    // Email delivery is optional and failures must not break the workflow.
     const emailResult = await sendQuoteEmail({
       to: quote.booking.customer.email,
       customerName: quote.booking.customer.name,
@@ -97,41 +135,6 @@ export async function POST(
       expiresAt: quote.expiresAt,
     });
 
-    if (!emailResult.success) {
-      return NextResponse.json(
-        {
-          message:
-            "The quote email could not be sent. The quote remains a draft. Check your Resend configuration and try again.",
-        },
-        { status: 502 }
-      );
-    }
-
-    const updated = await db.quote.updateMany({
-      where: {
-        id: quote.id,
-        status: "DRAFT",
-      },
-      data: {
-        status: "SENT",
-        sentAt: new Date(),
-      },
-    });
-
-    if (updated.count !== 1) {
-      console.error(
-        `Quote ${quote.id} was emailed, but its status changed before it could be updated.`
-      );
-
-      return NextResponse.json(
-        {
-          message:
-            "The email was sent, but the quote status changed concurrently. Refresh the quote list and verify its status.",
-        },
-        { status: 409 }
-      );
-    }
-
     const updatedQuote = await db.quote.findUnique({
       where: { id: quote.id },
       select: {
@@ -143,7 +146,10 @@ export async function POST(
     });
 
     return NextResponse.json({
-      message: "Quote emailed to the customer successfully.",
+      message: emailResult.success
+        ? "Quote sent to the customer successfully."
+        : "The quote is available in the customer's account, but the email notification could not be delivered.",
+      emailSent: emailResult.success,
       quote: updatedQuote,
     });
   } catch (error) {

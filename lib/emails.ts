@@ -1,6 +1,33 @@
 import { Resend } from "resend";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+function getEmailConfig() {
+  const apiKey = process.env.RESEND_API_KEY?.trim();
+  const fromAddress = process.env.EMAIL_FROM?.trim();
+
+  if (!apiKey || !fromAddress) {
+    console.warn(
+      "Email delivery is disabled because RESEND_API_KEY and EMAIL_FROM are not both configured."
+    );
+    return null;
+  }
+
+  try {
+    return {
+      resend: new Resend(apiKey),
+      fromAddress,
+    };
+  } catch (error) {
+    console.error(
+      "Failed to initialize Resend client:",
+      error instanceof Error ? error.message : "Unknown error"
+    );
+    return null;
+  }
+}
+
+function hasUsableEmailAddress(value: string | null | undefined) {
+  return typeof value === "string" && value.trim().length > 0 && /.+@.+\..+/.test(value.trim());
+}
 
 function escapeHtml(value: string) {
   return value.replace(/[&<>"']/g, (character) => {
@@ -52,10 +79,16 @@ export async function sendBookingStatusEmail({
   customerName: string;
   bookingNumber: string;
   status: string;
-}) {
-  if (!process.env.RESEND_API_KEY) {
-    console.error("Email not sent: RESEND_API_KEY is not configured.");
+}): Promise<{ success: boolean; id?: string; skipped?: boolean }> {
+  if (!hasUsableEmailAddress(to)) {
+    console.warn(`Email not sent for booking ${bookingNumber}: recipient email is missing or invalid.`);
     return { success: false };
+  }
+
+  const emailConfig = getEmailConfig();
+
+  if (!emailConfig) {
+    return { success: false, skipped: true };
   }
 
   const content = statusContent[status];
@@ -73,10 +106,8 @@ export async function sendBookingStatusEmail({
   const safeTitle = escapeHtml(content.title);
 
   try {
-    const { data, error } = await resend.emails.send({
-      from:
-        process.env.EMAIL_FROM ||
-        "SAMB's Laundry and Klinin Services <onboarding@resend.dev>",
+    const { data, error } = await emailConfig.resend.emails.send({
+      from: emailConfig.fromAddress,
       to: [to],
       subject: `${content.title} — ${bookingNumber}`,
       html: `
@@ -120,7 +151,10 @@ export async function sendBookingStatusEmail({
 
     return { success: true, id: data?.id };
   } catch (error) {
-    console.error("Failed to send booking status email:", error);
+    console.error(
+      "Failed to send booking status email:",
+      error instanceof Error ? error.message : "Unknown error"
+    );
     return { success: false };
   }
 }
@@ -149,6 +183,7 @@ function getQuoteEmailLines(value: unknown): QuoteEmailLine[] {
       typeof item === "object" && item !== null
   );
 }
+
 export async function sendQuoteEmail({
   to,
   customerName,
@@ -171,10 +206,16 @@ export async function sendQuoteEmail({
   breakdown: unknown;
   terms: string | null;
   expiresAt: Date | null;
-}) {
-  if (!process.env.RESEND_API_KEY) {
-    console.error("Quote email not sent: RESEND_API_KEY is not configured.");
+}): Promise<{ success: boolean; id?: string; skipped?: boolean }> {
+  if (!hasUsableEmailAddress(to)) {
+    console.warn(`Quote email not sent for quote ${quoteNumber}: recipient email is missing or invalid.`);
     return { success: false };
+  }
+
+  const emailConfig = getEmailConfig();
+
+  if (!emailConfig) {
+    return { success: false, skipped: true };
   }
 
   const appUrl = (
@@ -231,10 +272,8 @@ export async function sendQuoteEmail({
     : "Not specified";
 
   try {
-    const { data, error } = await resend.emails.send({
-      from:
-        process.env.EMAIL_FROM ||
-        "SAMB's Laundry and Klinin Services <onboarding@resend.dev>",
+    const { data, error } = await emailConfig.resend.emails.send({
+      from: emailConfig.fromAddress,
       to: [to],
       subject: `Your service quote ${quoteNumber} — SAMB`,
       html: `
@@ -308,7 +347,10 @@ export async function sendQuoteEmail({
 
     return { success: true, id: data?.id };
   } catch (error) {
-    console.error("Failed to send quote email:", error);
+    console.error(
+      "Failed to send quote email:",
+      error instanceof Error ? error.message : "Unknown error"
+    );
     return { success: false };
   }
 }
@@ -329,20 +371,24 @@ export async function sendQuoteResponseEmail({
   bookingNumber: string;
   decision: "ACCEPTED" | "DECLINED";
   responseNote: string | null;
-}) {
-  if (!process.env.RESEND_API_KEY) {
-    console.error("Quote response email not sent: RESEND_API_KEY is missing.");
+}): Promise<{ success: boolean; id?: string; skipped?: boolean }> {
+  if (!hasUsableEmailAddress(to)) {
+    console.warn(`Quote response email not sent for quote ${quoteNumber}: recipient email is missing or invalid.`);
     return { success: false };
+  }
+
+  const emailConfig = getEmailConfig();
+
+  if (!emailConfig) {
+    return { success: false, skipped: true };
   }
 
   const accepted = decision === "ACCEPTED";
   const title = accepted ? "Quote accepted" : "Quote declined";
 
   try {
-    const { data, error } = await resend.emails.send({
-      from:
-        process.env.EMAIL_FROM ||
-        "SAMB's Laundry and Klinin Services <onboarding@resend.dev>",
+    const { data, error } = await emailConfig.resend.emails.send({
+      from: emailConfig.fromAddress,
       to: [to],
       subject: `${title}: ${quoteNumber}`,
       html: `
@@ -389,7 +435,10 @@ export async function sendQuoteResponseEmail({
 
     return { success: true, id: data?.id };
   } catch (error) {
-    console.error("Failed to send quote response email:", error);
+    console.error(
+      "Failed to send quote response email:",
+      error instanceof Error ? error.message : "Unknown error"
+    );
     return { success: false };
   }
 }

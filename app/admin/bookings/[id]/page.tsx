@@ -1,4 +1,3 @@
-
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { ArrowLeft, CalendarDays, MapPin, UserRound } from "lucide-react";
@@ -7,6 +6,8 @@ import { db } from "@/lib/db";
 import NavBar from "@/components/layout/NavBar";
 import Footer from "@/components/layout/Footer";
 import BookingManager from "@/components/admin/booking-manager";
+import WhatsAppButton from "@/components/admin/WhatsAppButton";
+import { buildBookingWhatsAppMessage } from "@/lib/whatsapp";
 
 export const dynamic = "force-dynamic";
 
@@ -83,6 +84,14 @@ export default async function AdminBookingDetailPage({
     notFound();
   }
 
+  const bookingWhatsAppMessage = buildBookingWhatsAppMessage({
+    customerName: booking.customer.name,
+    bookingNumber: booking.bookingNumber,
+    serviceName: booking.service.name,
+    preferredDate: booking.preferredDate,
+    preferredTime: booking.preferredTime,
+  });
+
   return (
     <>
       <NavBar />
@@ -123,6 +132,17 @@ export default async function AdminBookingDetailPage({
                   <Detail label="Customer name" value={booking.customer.name} />
                   <Detail label="Email" value={booking.customer.email} />
                   <Detail label="Phone" value={booking.customer.phone} />
+                </div>
+
+                <div className="mt-4 border-t border-slate-100 pt-4">
+                  <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-500">
+                    Direct communication
+                  </p>
+                  <WhatsAppButton
+                    phone={booking.customer.phone}
+                    message={bookingWhatsAppMessage}
+                    showHelperText
+                  />
                 </div>
               </section>
 

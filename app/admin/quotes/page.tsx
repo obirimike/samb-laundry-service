@@ -56,6 +56,7 @@ export default async function AdminQuotesPage() {
                 id: true,
                 name: true,
                 email: true,
+                phone: true,
               },
             },
             service: {
@@ -90,6 +91,7 @@ export default async function AdminQuotesPage() {
           select: {
             name: true,
             email: true,
+            phone: true,
           },
         },
         service: {

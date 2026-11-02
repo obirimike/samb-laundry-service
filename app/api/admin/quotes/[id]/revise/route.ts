@@ -220,6 +220,7 @@ export async function POST(request: Request, context: RouteContext) {
                 select: {
                   name: true,
                   email: true,
+                  phone: true,
                 },
               },
               service: {
