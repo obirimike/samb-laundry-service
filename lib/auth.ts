@@ -1,4 +1,3 @@
-
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { compare } from "bcryptjs";
@@ -14,14 +13,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       name: "Email and password",
 
       credentials: {
-        email: {
-          label: "Email",
-          type: "email",
-        },
-        password: {
-          label: "Password",
-          type: "password",
-        },
+        email: { label: "Email", type: "email" },
+        password: { label: "Password", type: "password" },
       },
 
       async authorize(credentials) {
@@ -54,9 +47,46 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           name: user.name,
           email: user.email,
           role: user.role,
+          sessionVersion: user.sessionVersion,
         };
       },
     }),
   ],
 
+  callbacks: {
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id;
+        token.role = user.role;
+        token.sessionVersion = user.sessionVersion;
+      }
+
+      if (token.id) {
+        const currentUser = await db.user.findUnique({
+          where: { id: token.id },
+          select: { sessionVersion: true },
+        });
+
+        if (
+          !currentUser ||
+          currentUser.sessionVersion !== token.sessionVersion
+        ) {
+          delete token.id;
+          delete token.role;
+          delete token.sessionVersion;
+        }
+      }
+
+      return token;
+    },
+
+    async session({ session, token }) {
+      if (session.user) {
+        session.user.id = token.id ?? "";
+        session.user.role = token.role ?? "CUSTOMER";
+      }
+
+      return session;
+    },
+  },
 });
