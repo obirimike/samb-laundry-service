@@ -22,7 +22,7 @@ Timeout:  5000ms
 Call log:
   - Expect "toHaveAttribute" locator('#password') with timeout 5000ms
   - waiting for locator('#password')
-    14 × locator resolved to <input value="" required="" id="password" type="password" name="password" spellcheck="false" autocapitalize="none" autocomplete="current-password" placeholder="Enter your password" class="w-full rounded-xl border border-slate-300 px-4 py-3 pr-12 text-black outline-none transition focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100"/>
+    13 × locator resolved to <input value="" required="" id="password" type="password" name="password" spellcheck="false" autocapitalize="none" autocomplete="current-password" placeholder="Enter your password" class="w-full rounded-xl border border-slate-300 px-4 py-3 pr-12 text-black outline-none transition focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100"/>
        - unexpected value "password"
 
 ```
