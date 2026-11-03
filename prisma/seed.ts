@@ -1,4 +1,3 @@
-import { Pool } from "pg";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient, ServiceCategory } from "@prisma/client";
 

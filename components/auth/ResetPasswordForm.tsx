@@ -3,6 +3,7 @@
 
 import { FormEvent, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 type ResetPasswordFormProps = {
   token: string;
@@ -11,6 +12,7 @@ type ResetPasswordFormProps = {
 export default function ResetPasswordForm({
   token,
 }: ResetPasswordFormProps) {
+  const router = useRouter();
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -61,7 +63,7 @@ export default function ResetPasswordForm({
         return;
       }
 
-      window.location.assign("/login?passwordReset=true");
+      router.push("/login?passwordReset=true");
     } catch {
       setError("Something went wrong. Please try again.");
     } finally {
