@@ -2,7 +2,7 @@
 import ResetPasswordForm from "@/components/auth/ResetPasswordForm";
 
 export const metadata = {
-  title: "Reset Password | SAMB's Laundry & Cleaning Services",
+  title: "Reset Password | SAMB's Laundry & Klining Services",
   description: "Securely reset your SAMB account password.",
 };
 
