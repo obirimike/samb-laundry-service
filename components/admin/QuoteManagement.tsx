@@ -1091,7 +1091,7 @@ export default function QuoteManagement({
 
               <div>
                 <p className="text-sm font-semibold text-slate-700">
-                  Customer's message
+                  Customer&apos;s message
                 </p>
 
                 <div className="mt-2 min-h-24 rounded-xl border border-slate-200 bg-slate-50 p-4">
