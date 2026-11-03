@@ -3,7 +3,11 @@
 import { useState } from "react";
 import { signOut } from "next-auth/react";
 
-export default function SignOutButton() {
+type SignOutButtonProps = {
+  className?: string;
+};
+
+export default function SignOutButton({ className }: SignOutButtonProps) {
   const [isSigningOut, setIsSigningOut] = useState(false);
 
   async function handleSignOut() {
@@ -23,7 +27,12 @@ export default function SignOutButton() {
       type="button"
       onClick={handleSignOut}
       disabled={isSigningOut}
-      className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-60"
+      className={[
+        "inline-flex items-center justify-center rounded-lg border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-60",
+        className,
+      ]
+        .filter(Boolean)
+        .join(" ")}
     >
       {isSigningOut ? "Signing out..." : "Sign out"}
     </button>
