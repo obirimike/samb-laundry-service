@@ -1,3 +1,4 @@
+
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
 
@@ -36,10 +37,30 @@ const rateLimiters = redis
         analytics: true,
         timeout: 1_000,
       }),
+      account: new Ratelimit({
+        redis,
+        limiter: Ratelimit.slidingWindow(10, "10 m"),
+        prefix: "samb:account",
+        analytics: true,
+        timeout: 1_000,
+      }),
+      passwordReset: new Ratelimit({
+  redis,
+  limiter: Ratelimit.slidingWindow(5, "10 m"),
+  prefix: "samb:password-reset",
+  analytics: true,
+  timeout: 1_000,
+}),
     }
   : null;
 
-export type RateLimitPolicy = "auth" | "registration" | "contact" | "booking";
+export type RateLimitPolicy =
+  | "auth"
+  | "registration"
+  | "contact"
+  | "booking"
+  | "account"
+  | "passwordReset";
 
 export function getRequestIdentifier(request: Request, suffix?: string) {
   const forwardedFor = request.headers.get("x-forwarded-for");
@@ -61,7 +82,6 @@ export async function limitRequest(
       );
     }
 
-    // Allow local development without Redis.
     return null;
   }
 
@@ -79,6 +99,8 @@ export function rateLimitHeaders(result: {
     "RateLimit-Limit": String(result.limit),
     "RateLimit-Remaining": String(result.remaining),
     "RateLimit-Reset": String(Math.ceil(result.reset / 1000)),
-    "Retry-After": String(Math.max(0, Math.ceil((result.reset - Date.now()) / 1000))),
+    "Retry-After": String(
+      Math.max(0, Math.ceil((result.reset - Date.now()) / 1000))
+    ),
   };
 }
