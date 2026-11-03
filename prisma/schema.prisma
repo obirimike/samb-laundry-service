@@ -49,21 +49,23 @@ enum ReviewStatus {
 }
 
 model User {
-  id           String   @id @default(uuid())
-  name         String
-  email        String   @unique
-  phone        String?
-  passwordHash String?
-  role         UserRole @default(CUSTOMER)
+  id             String   @id @default(uuid())
+  name           String
+  email          String   @unique
+  phone          String?
+  passwordHash   String?
+  role           UserRole @default(CUSTOMER)
+  sessionVersion Int      @default(0)
 
   bookings              Booking[]
   notifications         Notification[]
-  quotesCreated         Quote[]             @relation("QuotesCreated")
-  assignmentsReceived   BookingAssignment[] @relation("AssignmentStaff")
-  assignmentsCreated    BookingAssignment[] @relation("AssignmentCreatedBy")
-  assignmentsUnassigned BookingAssignment[] @relation("AssignmentUnassignedBy")
-  reviews               Review[]            @relation("CustomerReviews")
-  reviewsModerated      Review[]            @relation("ReviewsModerated")
+  quotesCreated         Quote[]              @relation("QuotesCreated")
+  assignmentsReceived   BookingAssignment[]  @relation("AssignmentStaff")
+  assignmentsCreated    BookingAssignment[]  @relation("AssignmentCreatedBy")
+  assignmentsUnassigned BookingAssignment[]  @relation("AssignmentUnassignedBy")
+  reviews               Review[]             @relation("CustomerReviews")
+  reviewsModerated      Review[]             @relation("ReviewsModerated")
+  passwordResetTokens   PasswordResetToken[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -248,4 +250,18 @@ model Review {
   @@index([serviceId, status, createdAt])
   @@index([customerId, createdAt])
   @@index([status, createdAt])
+}
+
+model PasswordResetToken {
+  id        String    @id @default(uuid())
+  userId    String
+  tokenHash String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
 }

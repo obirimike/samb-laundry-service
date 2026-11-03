@@ -442,3 +442,108 @@ export async function sendQuoteResponseEmail({
     return { success: false };
   }
 }
+  export async function sendPasswordResetEmail({
+  to,
+  customerName,
+  resetUrl,
+}: {
+  to: string;
+  customerName: string;
+  resetUrl: string;
+}): Promise<{ success: boolean; id?: string; skipped?: boolean }> {
+  if (!hasUsableEmailAddress(to)) {
+    console.warn("Password reset email not sent: invalid recipient.");
+    return { success: false };
+  }
+
+  const emailConfig = getEmailConfig();
+
+  if (!emailConfig) {
+    return { success: false, skipped: true };
+  }
+
+  const safeName = escapeHtml(customerName || "Customer");
+  const safeUrl = escapeHtml(resetUrl);
+
+  try {
+    const { data, error } = await emailConfig.resend.emails.send({
+      from: emailConfig.fromAddress,
+      to: [to],
+      subject: "Reset your SAMB account password",
+      html: `
+        <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;color:#172033;line-height:1.6">
+          <div style="background:#123b73;padding:24px;border-radius:12px 12px 0 0">
+            <h1 style="color:#ffffff;font-size:22px;margin:0">
+              SAMB's Laundry and Klinin Services
+            </h1>
+          </div>
+
+          <div style="padding:28px;border:1px solid #e2e8f0;border-top:0;border-radius:0 0 12px 12px">
+            <p>Hello ${safeName},</p>
+
+            <h2>Reset your password</h2>
+
+            <p>
+              We received a request to reset the password associated with
+              your SAMB account.
+            </p>
+
+            <p>
+              Use the button below to choose a new password. This link
+              expires in 30 minutes and can only be used once.
+            </p>
+
+            <p>
+              <a href="${safeUrl}"
+                style="display:inline-block;background:#1d4ed8;color:#ffffff;text-decoration:none;padding:12px 18px;border-radius:8px;font-weight:bold">
+                Reset my password
+              </a>
+            </p>
+
+            <p>
+              If the button does not work, copy and paste this link into
+              your browser:
+            </p>
+
+            <p style="word-break:break-all;font-size:13px">
+              ${safeUrl}
+            </p>
+
+            <p style="font-size:13px;color:#64748b">
+              If you did not request a password reset, you can safely
+              ignore this email. Your password will not change.
+            </p>
+          </div>
+        </div>
+      `,
+      text: [
+        `Hello ${customerName || "Customer"},`,
+        "",
+        "We received a request to reset your SAMB account password.",
+        "",
+        "Use this link to choose a new password:",
+        resetUrl,
+        "",
+        "This link expires in 30 minutes and can only be used once.",
+        "",
+        "If you did not request this, you can ignore this email.",
+        "",
+        "SAMB's Laundry and Klinin Services",
+      ].join("\n"),
+    });
+
+    if (error) {
+      console.error("Password reset email error:", error.message);
+      return { success: false };
+    }
+
+    return { success: true, id: data?.id };
+  } catch (error) {
+    console.error(
+      "Failed to send password reset email:",
+      error instanceof Error ? error.message : "Unknown error"
+    );
+
+    return { success: false };
+  }
+}

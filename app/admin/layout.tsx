@@ -1,7 +1,26 @@
+
 import type { ReactNode } from "react";
+import { redirect } from "next/navigation";
+import { auth } from "@/lib/auth";
 import AdminNavigation from "@/components/admin/AdminNavigation";
 
-export default function AdminLayout({ children }: { children: ReactNode }) {
+export const dynamic = "force-dynamic";
+
+export default async function AdminLayout({
+  children,
+}: {
+  children: ReactNode;
+}) {
+  const session = await auth();
+
+  if (!session?.user?.id) {
+    redirect("/login?callbackUrl=%2Fadmin");
+  }
+
+  if (session.user.role !== "ADMIN") {
+    redirect("/account");
+  }
+
   return (
     <section className="min-h-screen bg-slate-50 lg:flex">
       <AdminNavigation />

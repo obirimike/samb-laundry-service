@@ -13,7 +13,14 @@ const createStaffSchema = z
     name: z.string().trim().min(2).max(100),
     email: z.string().trim().email().max(254),
     phone: z.string().trim().max(30).optional(),
-    password: z.string().min(10).max(128),
+   password: z
+  .string()
+  .min(10, "Staff passwords must contain at least 10 characters.")
+  .max(72, "Staff passwords must not exceed 72 characters.")
+  .refine(
+    (value) => Buffer.byteLength(value, "utf8") <= 72,
+    "Staff passwords are too long."
+  ),
   })
   .strict();
 

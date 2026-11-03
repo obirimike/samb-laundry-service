@@ -94,6 +94,29 @@ function LoginFormContent() {
               Your account was created successfully. Please sign in.
             </div>
           )}
+            {searchParams.get("passwordChanged") === "true" && (
+  <div
+    role="status"
+    className="rounded-xl border border-green-200 bg-green-50 p-3 text-sm text-green-800"
+  >
+    Your password has been changed successfully. Please sign in with
+    your new password.
+  </div>
+ )}
+
+  {(searchParams.get("passwordChanged") === "true" ||
+  searchParams.get("passwordReset") === "true") && (
+  <p
+    role="status"
+    className="rounded-lg bg-green-50 p-3 text-sm text-green-700"
+  >
+    {searchParams.get("passwordReset") === "true"
+      ? "Your password has been reset successfully. Please sign in with your new password."
+      : "Your password has been changed. Please sign in again."}
+  </p>
+)}
+
+          
 
           {error && (
             <div role="alert" className="rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-700">
@@ -149,6 +172,15 @@ function LoginFormContent() {
                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
             </div>
+
+            <div className="mt-2 text-right">
+  <Link
+    href="/forgot-password"
+    className="text-sm font-medium text-blue-900 hover:text-blue-800"
+  >
+    Forgot password?
+  </Link>
+</div>
           </div>
 
           <button
