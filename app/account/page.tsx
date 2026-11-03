@@ -124,23 +124,22 @@ export default async function AccountPage() {
             </span>
             <span className="truncate">SAMB&apos;s Services</span>
           </Link>
-
-          <div className="flex shrink-0 items-center gap-2">
+<div className="flex shrink-0 items-center gap-2">
             <Link
               href="/account/notifications"
               aria-label="Notifications"
               className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-slate-200 px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 sm:px-4"
             >
-              <Bell size={17} aria-hidden="true" />
-              <span className="hidden sm:inline">Notifications</span>
-            </Link>
-            <Link
-  href="/account/profile"
-  className="inline-flex min-h-11 items-center justify-center rounded-xl border border-slate-200 px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 sm:px-4"
->
-  Profile
-</Link>
-            <SignOutButton />
+                <Bell size={17} aria-hidden="true" />
+                <span className="hidden sm:inline">Notifications</span>
+              </Link>
+              <Link
+                href="/account/profile"
+                className="inline-flex min-h-11 items-center justify-center rounded-xl border border-slate-200 px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 sm:px-4"
+              >
+                Profile
+              </Link>
+             <SignOutButton />
           </div>
         </div>
       </header>
