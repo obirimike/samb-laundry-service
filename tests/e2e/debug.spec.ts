@@ -31,10 +31,15 @@ test("debug scripts and hydration", async ({ browser }) => {
 
   // Check if any script executed: window.__NEXT_DATA__ or React
   const globals = await page.evaluate(() => {
+    const w = window as Window & {
+      React?: unknown;
+      __next?: unknown;
+    };
+
     return {
-      hasReact: !!(window as any).React,
-      hasNext: !!(window as any).__next,
-      keys: Object.keys(window).filter(k => k.toLowerCase().includes("next") || k.toLowerCase().includes("react")),
+      hasReact: !!w.React,
+      hasNext: !!w.__next,
+      keys: Object.keys(w).filter(k => k.toLowerCase().includes("next") || k.toLowerCase().includes("react")),
     };
   });
   console.log("Window globals:", globals);
