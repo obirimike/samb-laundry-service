@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from "next/link";
@@ -12,7 +13,9 @@ import {
   UserCheck,
   UserPlus,
   Users,
+  UserRound,
 } from "lucide-react";
+import SignOutButton from "@/components/auth/SignOutButton";
 
 const navigationItems = [
   { href: "/admin", label: "Overview", icon: LayoutDashboard },
@@ -24,13 +27,14 @@ const navigationItems = [
   { href: "/admin/services", label: "Services", icon: BriefcaseBusiness },
   { href: "/admin/quotes", label: "Quotes & pricing", icon: BadgeDollarSign },
   { href: "/admin/reviews", label: "Reviews", icon: Star },
+  { href: "/account/profile", label: "Profile settings", icon: UserRound },
 ];
 
 export default function AdminNavigation() {
   const pathname = usePathname();
 
   return (
-    <aside className="border-b border-slate-200 bg-white px-4 py-4 lg:sticky lg:top-0 lg:h-screen lg:w-64 lg:shrink-0 lg:border-b-0 lg:border-r lg:px-5 lg:py-8">
+    <aside className="border-b border-slate-200 bg-white px-4 py-4 lg:sticky lg:top-0 lg:flex lg:h-screen lg:w-64 lg:shrink-0 lg:flex-col lg:border-b-0 lg:border-r lg:px-5 lg:py-8">
       <div className="mb-4 lg:mb-10">
         <p className="text-base font-extrabold tracking-tight text-slate-900">
           SAMB&apos;S
@@ -40,17 +44,20 @@ export default function AdminNavigation() {
         </p>
       </div>
 
-      <nav aria-label="Admin navigation">
+      <nav aria-label="Admin navigation" className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-3 py-4">
         <p className="mb-3 hidden px-3 text-xs font-bold uppercase tracking-wider text-slate-400 lg:block">
           Workspace
         </p>
+
         <ul className="flex gap-2 overflow-x-auto pb-1 lg:flex-col lg:overflow-visible lg:pb-0">
           {navigationItems.map((item) => {
             const Icon = item.icon;
+
             const isActive =
               item.href === "/admin"
                 ? pathname === item.href
-                : pathname === item.href || pathname.startsWith(`${item.href}/`);
+                : pathname === item.href ||
+                  pathname.startsWith(`${item.href}/`);
 
             return (
               <li key={item.href}>
@@ -71,6 +78,14 @@ export default function AdminNavigation() {
           })}
         </ul>
       </nav>
+
+      <div className="mt-4 border-t border-slate-200 pt-4 lg:mt-auto lg:pt-6">
+        <p className="mb-3 px-3 text-xs font-bold uppercase tracking-wider text-slate-400">
+          Account
+        </p>
+        
+        <SignOutButton />
+      </div>
     </aside>
   );
 }
