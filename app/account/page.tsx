@@ -134,6 +134,12 @@ export default async function AccountPage() {
               <Bell size={17} aria-hidden="true" />
               <span className="hidden sm:inline">Notifications</span>
             </Link>
+            <Link
+  href="/account/profile"
+  className="inline-flex min-h-11 items-center justify-center rounded-xl border border-slate-200 px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 sm:px-4"
+>
+  Profile
+</Link>
             <SignOutButton />
           </div>
         </div>
