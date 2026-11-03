@@ -20,7 +20,8 @@ const authConfig = {
     async session({ session, token }) {
       if (session.user) {
         session.user.id = token.id as string;
-        session.user.role = token.role as "CUSTOMER" | "ADMIN";
+        session.user.role = 
+        (token.role as "CUSTOMER" | "ADMIN" | "STAFF" | undefined) ?? "CUSTOMER";
       }
 
       return session;
