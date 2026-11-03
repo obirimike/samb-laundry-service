@@ -136,14 +136,14 @@ export function buildBookingWhatsAppMessage({
   return [
     `Hello ${name},`,
     "",
-    "This is SAMB Laundry & Cleaning Services.",
+    "This is SAMB's LAUNDRY & KLININ Services.",
     "",
     `We are contacting you regarding your booking ${bookingNumber} for ${serviceName}, scheduled for ${formattedDate}${timeDetails}.`,
     "",
     "Please contact us if you have any questions.",
     "",
     "Thank you,",
-    "SAMB Laundry & Cleaning Services.",
+    "SAMB Laundry & Cleaning SERVICES.",
   ].join("\n");
 }
 
@@ -179,65 +179,65 @@ export function buildQuoteWhatsAppMessage({
       return [
         `Hello ${name},`,
         "",
-        "This is SAMB Laundry & Cleaning Services.",
+        "This is SAMB's LAUNDRY & KLININ SERVICES.",
         "",
         `We are currently preparing your service quotation ${quoteNumber}${bookingRef}. We will notify you as soon as it is ready for your review.`,
         "",
         "Please contact us if you have any questions.",
         "",
         "Thank you,",
-        "SAMB Laundry & Cleaning Services.",
+        "SAMB's LAUNDRY & KLININ SERVICES.",
       ].join("\n");
 
     case "ACCEPTED":
       return [
         `Hello ${name},`,
         "",
-        "This is SAMB Laundry & Cleaning Services.",
+        "This is SAMB's LAUNDRY & KLININ SERVICES.",
         "",
         `Thank you for accepting service quotation ${quoteNumber}${bookingRef}. Our team is proceeding with your service arrangements.`,
         "",
         "Please contact us if you have any questions.",
         "",
         "Thank you,",
-        "SAMB Laundry & Cleaning Services.",
+        "SAMB's LAUNDRY & KLININ SERVICES.",
       ].join("\n");
 
     case "DECLINED":
       return [
         `Hello ${name},`,
         "",
-        "This is SAMB Laundry & Cleaning Services.",
+        "This is SAMB's LAUNDRY & KLININ SERVICES.",
         "",
         `We have noted your response regarding service quotation ${quoteNumber}${bookingRef}. Please let us know if you would like to discuss adjustments or alternative options.`,
         "",
         "Thank you,",
-        "SAMB Laundry & Cleaning Services.",
+        "SAMB's LAUNDRY & KLININ SERVICES.",
       ].join("\n");
 
     case "EXPIRED":
       return [
         `Hello ${name},`,
         "",
-        "This is SAMB Laundry & Cleaning Services.",
+        "This is SAMB's LAUNDRY & KLININ SERVICES.",
         "",
         `Your service quotation ${quoteNumber}${bookingRef} has expired. If you would like an updated quote, please log in to your SAMB account or contact us:`,
         quotePageUrl,
         "",
         "Thank you,",
-        "SAMB Laundry & Cleaning Services.",
+        "SAMB's LAUNDRY & KLININ SERVICES.",
       ].join("\n");
 
     case "WITHDRAWN":
       return [
         `Hello ${name},`,
         "",
-        "This is SAMB Laundry & Cleaning Services.",
+        "This is SAMB's LAUNDRY & KLININ SERVICES.",
         "",
         `Service quotation ${quoteNumber}${bookingRef} has been withdrawn while we prepare an updated quotation for you. We will update you shortly.`,
         "",
         "Thank you,",
-        "SAMB Laundry & Cleaning Services.",
+        "SAMB's LAUNDRY & KLININ SERVICES.",
       ].join("\n");
 
     case "SENT":
@@ -245,7 +245,7 @@ export function buildQuoteWhatsAppMessage({
       return [
         `Hello ${name},`,
         "",
-        "This is SAMB Laundry & Cleaning Services.",
+        "This is SAMB's LAUNDRY & KLININ SERVICES.",
         "",
         `We have an update regarding your service quotation ${quoteNumber}${bookingRef}.`,
         "",
@@ -253,7 +253,7 @@ export function buildQuoteWhatsAppMessage({
         quotePageUrl,
         "",
         "Thank you,",
-        "SAMB Laundry & Cleaning Services.",
+        "SAMB's LAUNDRY & KLININ SERVICES.",
       ].join("\n");
   }
 }

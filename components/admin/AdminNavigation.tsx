@@ -44,12 +44,12 @@ export default function AdminNavigation() {
         </p>
       </div>
 
-      <nav aria-label="Admin navigation" className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-3 py-4">
+      <nav aria-label="Admin navigation" className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-1 py-4 sm:px-3">
         <p className="mb-3 hidden px-3 text-xs font-bold uppercase tracking-wider text-slate-400 lg:block">
           Workspace
         </p>
 
-        <ul className="flex gap-2 overflow-x-auto pb-1 lg:flex-col lg:overflow-visible lg:pb-0">
+        <ul className="flex flex-wrap gap-2 pb-1 md:flex-nowrap md:overflow-x-auto lg:flex-col lg:overflow-visible lg:pb-0">
           {navigationItems.map((item) => {
             const Icon = item.icon;
 
@@ -60,11 +60,11 @@ export default function AdminNavigation() {
                   pathname.startsWith(`${item.href}/`);
 
             return (
-              <li key={item.href}>
+              <li key={item.href} className="min-w-[140px] flex-1 lg:min-w-0 lg:flex-none">
                 <Link
                   href={item.href}
                   aria-current={isActive ? "page" : undefined}
-                  className={`flex shrink-0 items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition-colors lg:w-full ${
+                  className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition-colors ${
                     isActive
                       ? "bg-blue-50 text-blue-800"
                       : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
@@ -83,8 +83,10 @@ export default function AdminNavigation() {
         <p className="mb-3 px-3 text-xs font-bold uppercase tracking-wider text-slate-400">
           Account
         </p>
-        
-        <SignOutButton />
+
+        <div className="px-1 lg:px-0">
+          <SignOutButton className="w-full justify-center rounded-xl border border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100" />
+        </div>
       </div>
     </aside>
   );
