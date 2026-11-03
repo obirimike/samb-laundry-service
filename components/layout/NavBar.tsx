@@ -1,7 +1,8 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Menu } from "lucide-react";
 import { auth } from "@/lib/auth";
+import SignOutButton from "@/components/auth/SignOutButton";
+import MobileNavigationMenu from "@/components/layout/MobileNavigationMenu";
 
 const links = [
   { href: "/", label: "Home" },
@@ -24,11 +25,11 @@ export default async function NavBar() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/95 backdrop-blur">
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-4 sm:px-6 lg:px-8">
         <Link
           href="/"
-          className="flex items-center gap-3"
-          aria-label="SAMB's Laundry and Klinin Services homepage"
+          className="flex min-w-0 items-center gap-3"
+          aria-label="SAMB&apos;s Laundry and Klinin Services homepage"
         >
           <span className="relative flex h-11 w-11 shrink-0 overflow-hidden rounded-full border border-blue-200 bg-blue-900 shadow-sm">
             <Image
@@ -41,11 +42,11 @@ export default async function NavBar() {
             />
           </span>
 
-          <span>
+          <span className="min-w-0">
             <span className="block text-base font-extrabold tracking-tight text-slate-900">
               SAMB&apos;S
             </span>
-            <span className="block text-xs font-medium text-slate-500">
+            <span className="block text-[11px] font-medium text-slate-500 sm:text-xs">
               Laundry &amp; Klinin Services
             </span>
           </span>
@@ -68,12 +69,15 @@ export default async function NavBar() {
 
         <div className="hidden items-center gap-3 md:flex">
           {isStaff ? (
-            <Link
-              href="/staff"
-              className="rounded-xl bg-[#031c43] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-800"
-            >
-              Staff Dashboard
-            </Link>
+            <>
+              <Link
+                href="/staff"
+                className="rounded-xl bg-[#031c43] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-800"
+              >
+                Staff Dashboard
+              </Link>
+              <SignOutButton className="px-4 py-2.5" />
+            </>
           ) : isSignedIn ? (
             <>
               <Link
@@ -88,6 +92,7 @@ export default async function NavBar() {
               >
                 {bookingLabel}
               </Link>
+              {!isAdmin && <SignOutButton className="px-4 py-2.5" />}
             </>
           ) : (
             <>
@@ -107,70 +112,16 @@ export default async function NavBar() {
           )}
         </div>
 
-        <details className="relative md:hidden">
-          <summary
-            aria-label="Open navigation menu"
-            className="flex h-11 w-11 cursor-pointer list-none items-center justify-center rounded-xl border border-slate-200 text-slate-700 transition hover:bg-slate-50"
-          >
-            <Menu size={23} />
-          </summary>
-
-          <nav
-            aria-label="Mobile navigation"
-            className="absolute right-0 top-14 w-64 rounded-2xl border border-slate-200 bg-white p-3 shadow-xl"
-          >
-            {links.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="block rounded-lg px-3 py-3 text-sm font-medium text-slate-700 transition hover:bg-slate-50 hover:text-blue-700"
-              >
-                {link.label}
-              </Link>
-            ))}
-
-            <div className="my-2 border-t border-slate-100" />
-
-            {isStaff ? (
-              <Link
-                href="/staff"
-                className="mt-2 block rounded-xl bg-[#031c43] px-3 py-3 text-center text-sm font-semibold text-white transition hover:bg-blue-800"
-              >
-                Staff Dashboard
-              </Link>
-            ) : isSignedIn ? (
-              <>
-                <Link
-                  href={dashboardHref}
-                  className="block rounded-lg px-3 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
-                >
-                  {dashboardLabel}
-                </Link>
-                <Link
-                  href={bookingHref}
-                  className="mt-2 block rounded-xl bg-[#031c43] px-3 py-3 text-center text-sm font-semibold text-white transition hover:bg-blue-800"
-                >
-                  {bookingLabel}
-                </Link>
-              </>
-            ) : (
-              <>
-                <Link
-                  href="/register"
-                  className="block rounded-lg px-3 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
-                >
-                  Create Account
-                </Link>
-                <Link
-                  href={bookingHref}
-                  className="mt-2 block rounded-xl bg-[#031c43] px-3 py-3 text-center text-sm font-semibold text-white transition hover:bg-blue-800"
-                >
-                  {bookingLabel}
-                </Link>
-              </>
-            )}
-          </nav>
-        </details>
+        <MobileNavigationMenu
+          links={links}
+          isSignedIn={isSignedIn}
+          isStaff={isStaff}
+          isAdmin={isAdmin}
+          dashboardHref={dashboardHref}
+          dashboardLabel={dashboardLabel}
+          bookingHref={bookingHref}
+          bookingLabel={bookingLabel}
+        />
       </div>
     </header>
   );
